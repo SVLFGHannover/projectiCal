@@ -1,18 +1,23 @@
 class VCalendar:
-    def __init__(self, userID, name, description, prodid, version, calscale, method, xprop, ianaprop):
+    def __init__(self, userID, name, description):
         self.userID = userID
         self.name = name
         self.description = description
-        self.prodid = prodid
-        self.version = version
-        self.calscale = calscale
-        self.method = method
-        self.xprop = xprop
-        self.ianaprop = ianaprop
+        self.prodid = ""
+        self.version = "1.0"
+        self.calscale = "gregorian"
+        self.method = ""
+        self.xprop = "NULL"
+        self.ianaprop = "NULL"
 
-    def InsertCalendar(self):
-        sql_insertCalendar = f"INSERT INTO `vcalendar`(`userID`, `name`, `description`, `prodid`," \
-                             f" `version`, `calscale`, `method`, `xprop`, `ianaprop`)" \
-                        f"VALUES ({self.userID},{self.name},{self.description},{self.prodid}," \
-                         f"{self.version},{self.calscale},{self.method},{self.xprop}, {self.ianaprop})"
-        return sql_insertCalendar
+    def insertCalendar(self, db):
+        mycursor = db.cursor()
+        sql_insertCalendar = f"INSERT INTO VCALENDAR(USERID, NAME, DESCRIPTION, PRODID," \
+                             f" VERSION, CALSCALE, METHOD, XPROP, IANAPROP)" \
+                             f"VALUES ({self.userID},'{self.name}','{self.description}','{self.prodid}'," \
+                             f"'{self.version}','{self.calscale}','{self.method}',{self.xprop}, {self.ianaprop})"
+        try:
+            mycursor.execute(sql_insertCalendar)
+            db.commit()
+        except:
+            db.rollback()
