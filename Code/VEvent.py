@@ -4,30 +4,30 @@ import datetime
 class VEvent:
     def __init__(self, description, dtstart, dtend, vcalendarID):
         self.description = description
-        self.summary = ""
-        self.class_ = ""
-        self.priority = 0
-        self.dtstamp = datetime.datetime.now()
-        self.dtstart = dtstart
-        self.dtend = dtend
-        self.duration = ""
-        self.created = datetime.datetime.now()
-        self.lastmod = ""
-        self.recurid = "iCalendar-SVLFG"
+        self.summary = ""                                                      # Title of Event
+        self.class_ = ""                                                       # Access classification ( public / private )
+        self.priority = 0                                                      # 1 (lowest) - 9 (highest), 0 = undefined
+        self.dtstamp = datetime.datetime.now()                                 # Time of Creation
+        self.dtstart = dtstart                                                 # Starting time of event
+        self.dtend = dtend                                                     # Ending time of event
+        self.duration = ""                                                     # Alternative to dtend, duration of event
+        self.created = datetime.datetime.now()                           # Same as dtstamp
+        self.lastmod = ""                                                # Date of last modification of iCalendar-Object
+        self.recurid = ""                                                      # Identifier for repetition of event
         self.vcalendarID = vcalendarID
         self.dic_ID = {"rruleID": "NULL", "valarmID": "NULL", "resourcesID": "NULL",
                        "relatedID": "NULL", "rstatusID": "NULL", "rdateID": "NULL",
                        "attachID": "NULL", "attendeeID": "NULL", "categoriesID": "NULL", "commentsID": "NULL",
                        "contactID": "NULL", "exdateID": "NULL", "xpropID": "NULL", "ianapropID": "NULL"}
-        self.geolat = 0.0
-        self.geolng = 0.0
-        self.location = ""
+        self.geolat = 0.0                                                  # Latitude of location
+        self.geolng = 0.0                                                  # Longitude of location
+        self.location = ""                                          # Alternative to geolat, geolng, address of location
         self.organizer = ""
-        self.uid = ""
-        self.seq = 0
-        self.status = ""
-        self.transp = ""
-        self.url = ""
+        self.uid = ""                                               # Identifier for the event, Date|Time|PID|@|IPAdress
+        self.seq = 0                                                # Number of modifications
+        self.status = ""                                            # tentative / confirmed / cancelled
+        self.transp = ""                                            # Identifier, if an event takes time ( either opaque or transparent )
+        self.url = ""                                                       # Link to the iCalendar-Object
 
     def insertEvent(self, db):
         mycursor = db.cursor()

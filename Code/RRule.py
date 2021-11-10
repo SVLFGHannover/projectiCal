@@ -1,19 +1,19 @@
 class RRule:
     def __init__(self):
-        self.freq = ""
-        self.until = ""
-        self.count = 0
-        self.interval = 0
-        self.bysecond = ""
-        self.byminute = ""
-        self.byhour = ""
-        self.byday = ""
-        self.bymonthday = ""
-        self.byyearday = ""
-        self.byweekno = ""
-        self.bymonth = ""
-        self.bysetpos = ""
-        self.wkst = ""
+        self.freq = ""              # "SECONDLY", "MINUTELY", "HOURLY", "DAILY", "WEEKLY", "MONTHLY", "YEARLY"
+        self.until = ""             # either until or count, until = datetime
+        self.count = 0              # number of repetition
+        self.interval = 0           # interval in relation to freq, f.e. freq = DAILY, interval = 3 -> every third day
+        self.bysecond = ""          # 0 - 60
+        self.byminute = ""          # 0 - 60
+        self.byhour = ""            # 0 - 23
+        self.byday = ""             # combination of day and number in relation to monthly/yearly in freq
+        self.bymonthday = ""        # -31 - 31
+        self.byyearday = ""         # -366 - 366
+        self.byweekno = ""          # -53 - 53
+        self.bymonth = ""           # 1 - 12
+        self.bysetpos = ""          # “chooses” the 'nth' occurrence within a set of dates, must be used with by...
+        self.wkst = "MO"              # Weekstart ( default Monday )
 
     def insertRRule(self, db):
         mycursor = db.cursor()
