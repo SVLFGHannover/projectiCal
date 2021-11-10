@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<head>
+    <title>Forms</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
+</head>
+
+<body><div class="container">
+<h1>User anlegen</h1>
+<p>Name:<input type="text"></p>
+<p>Email:<input type="email"></p>
+<p><input type="submit" value="Profil erstellen"></p>
+</div>
+
+<p><i>INSERT INTO `user`(`name`, `email`) VALUES ('[value-1]','[value-2]')</i></p>
+
+<div class="container">
+<h1>Termin anlegen</h1>
+<p>Name:<input type="text"></p>
+    <p>Kalender auswählen
+    <select name=”calendar”>
+<option value=”hauptkalender”>Hauptkalender</option>
+<option value=”sport”>Sport</option>
+<option value=”berufsschule”>Berufsschule</option>
+</select></p>
+<p>Von: <input type="date"> <input type="time">
+        <div class="form-check form-check-inline">
+  <input class="form-check-input" type="radio" name="inlineRadioOptions4" id="inlineRadio9" value="option3">
+  <label class="form-check-label" for="inlineRadio3">Bis</label>
+</div>
+    <div class="form-check form-check-inline">
+  <input class="form-check-input" type="radio" name="inlineRadioOptions4" id="inlineRadio10" value="option3">
+  <label class="form-check-label" for="inlineRadio3">Dauer</label>
+
+</div></p><p>Bis: <input type="date"> <input type="time"></p>
+<h6>Alarm</h6>
+    <div class="form-check form-check-inline">
+  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio0" value="option1">
+  <label class="form-check-label" for="inlineRadio1">Kein</label>
+</div>
+<div class="form-check form-check-inline">
+  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
+  <label class="form-check-label" for="inlineRadio1">Email</label>
+</div>
+<div class="form-check form-check-inline">
+  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
+  <label class="form-check-label" for="inlineRadio2">Sound</label>
+</div>
+    <div class="form-check form-check-inline">
+  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio4" value="option3">
+  <label class="form-check-label" for="inlineRadio3">Anzeige</label>
+</div>
+    <h6>Wiederholend</h6>
+    <div class="form-check form-check-inline">
+  <input class="form-check-input" type="radio" name="inlineRadioOptions2" id="inlineRadio5" value="option3">
+  <label class="form-check-label" for="inlineRadio3">Ja</label>
+</div>
+    <div class="form-check form-check-inline">
+  <input class="form-check-input" type="radio" name="inlineRadioOptions2" id="inlineRadio6" value="option3">
+  <label class="form-check-label" for="inlineRadio3">Nein</label>
+</div>
+---
+repeat radio
+repeat every (number)(dropdown:day,week etc.)
+repeat on (days aufgereight als buttons)
+ends (radios) never, on (date), after (number)
+---
+    <h6>Gäste / Teilnehmer</h6>
+    Email: <input type="text"> <button>Add</button>  # sucht erst ob der User bereits existiert
+<h6>Location</h6>
+        <div class="form-check form-check-inline">
+  <input class="form-check-input" type="radio" name="inlineRadioOptions3" id="inlineRadio7" value="option3">
+  <label class="form-check-label" for="inlineRadio3">GeoData</label>
+</div>
+    <div class="form-check form-check-inline">
+  <input class="form-check-input" type="radio" name="inlineRadioOptions3" id="inlineRadio8" value="option3">
+  <label class="form-check-label" for="inlineRadio3">Adresse</label>
+</div>
+    # Geodata = (lat, long) oder Adresse
+    <p><input type="text"></p>
+<h6>Beschreibung</h6>
+    <input type="text">
+<h6>Ressourcen</h6>
+    <input type="text"><button>Add</button> # sucht erst, ob Ressource bereits in der Datenbank ist
+<h6>Kategory</h6>
+    <input type="text"><button>Add</button> # sucht erst, ob Kategorie bereits in der Datenbank ist
+
+    <h6>Kommentar</h6>
+    <input type="text">
+<p></p>
+<p><input type="submit" value="Event erstellen"></p>
+</div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+
+
+</body>
