@@ -1,78 +1,82 @@
-import mysql.connector
+import datetime
 
 
 class VEvent:
-    def __init__(self):
-        self.description = None
-        self.summary = None
-        self.class_ = None
-        self.priority = None
-        self.dtstamp = None
-        self.dtstart = None
-        self.dtend = None
-        self.duration = None
-        self.created = None
-        self.lastmod = None
-        self.dic_ID = {"rruleID": 0, "vcalendarID": 0, "valarmID": 0, "resourcesID": 0,
-                       "relatedID": 0, "rstatus": 0, "rdateID": 0, "recurid": 0,
-                       "attachID": 0, "attendeeID": 0, "categoriesID": 0, "commentID": 0,
-                       "contactID": 0, "exdateID": 0, "xpropID": 0, "ianapropID": 0}
-        self.geolat = None
-        self.geolong = None
-        self.location = None
-        self.organizer = None
-        self.uid = None
-        self.seq = None
-        self.status = None
-        self.transp = None
-        self.url = None
+    def __init__(self, description, dtstart, dtend, vcalendarID):
+        self.description = description
+        self.summary = ""                                                      # Title of Event
+        self.class_ = ""                                                       # Access classification ( public / private )
+        self.priority = 0                                                      # 1 (lowest) - 9 (highest), 0 = undefined
+        self.dtstamp = datetime.datetime.now()                                 # Time of Creation
+        self.dtstart = dtstart                                                 # Starting time of event
+        self.dtend = dtend                                                     # Ending time of event
+        self.duration = ""                                                     # Alternative to dtend, duration of event
+        self.created = datetime.datetime.now()                           # Same as dtstamp
+        self.lastmod = ""                                                # Date of last modification of iCalendar-Object
+        self.recurid = ""                                                      # Identifier for repetition of event
+        self.vcalendarID = vcalendarID
+        self.dic_ID = {"rruleID": "NULL", "valarmID": "NULL", "resourcesID": "NULL",
+                       "relatedID": "NULL", "rstatusID": "NULL", "rdateID": "NULL",
+                       "attachID": "NULL", "attendeeID": "NULL", "categoriesID": "NULL", "commentsID": "NULL",
+                       "contactID": "NULL", "exdateID": "NULL", "xpropID": "NULL", "ianapropID": "NULL"}
+        self.geolat = 0.0                                                  # Latitude of location
+        self.geolng = 0.0                                                  # Longitude of location
+        self.location = ""                                          # Alternative to geolat, geolng, address of location
+        self.organizer = ""
+        self.uid = ""                                               # Identifier for the event, Date|Time|PID|@|IPAdress
+        self.seq = 0                                                # Number of modifications
+        self.status = ""                                            # tentative / confirmed / cancelled
+        self.transp = ""                                            # Identifier, if an event takes time ( either opaque or transparent )
+        self.url = ""                                                       # Link to the iCalendar-Object
 
-    def InsertEvent(self):
-        sql_insertEvent = f"INSERT INTO `vevent`" \
-                          f"(`description`, `dtstamp`, `uid`, `dtstart`, `dtend`, `duration`, `class `, `created`," \
-                          f" `geolat`, `geolng`, `lastmod`, `location`, `organizer`, `priority`, `seq`, `status`," \
-                          f" `summary`, `transp`, `url`, `recurid`, `attachID`, `attendeeID`, `categoriesID`, `commentID`," \
-                          f" `contactID`, `exdateID`, `rstatusID`, `relatedID`, `resourcesID`, `rdateID`, `xpropID`," \
-                          f" `ianapropID`, `valarmID`, `rruleID`, `vcalendarID`)" \
-                          f"VALUES" \
-                          f" ('{description}', '{dtstamp}', '{uid}', '{dtstart}', '{dtend}', '{duration}', '{class_}', '{created}'," \
-                          f" '{geolat}', '{geolng}', '{lastmod}', '{location}', '{organizer}', '{priority}', '{seq}', '{status}'," \
-                          f" '{summary}', '{transp}', '{url}', '{dic_ID['recurid']}', '{dic_ID['attachID']}', '{dic_ID['attendeeID']}'," \
-                          f" '{dic_ID['categoriesID']}', '{dic_ID['commentID']}'," \
-                          f" '{dic_ID['contactID']}', '{dic_ID['exdateID']}', '{dic_ID['rstatusID']}', '{dic_ID['relatedID']}'," \
-                          f" '{dic_ID['resourcesID']}', '{dic_ID['rdateID']}', '{dic_ID['xpropID']}', '{dic_ID['ianapropID']}'," \
-                          f" '{dic_ID['valarmID']}', '{dic_ID['rruleID']}', '{dic_ID['vcalendarID']}')"
-        return sql_insertEvent
-
-
-def insertCategory(newCategory):
-    sql_insertCategory = f"INSERT INTO `Categories`(`category`) VALUES ({newCategory})"
-    try:
-        cursor.execute(sql_insertCategory)
-        mydb.commit()
-    except:
-        mydb.rollback()
-    return sql_insertCategory
+    def insertEvent(self, db):
+        mycursor = db.cursor()
+        sql_insertEvent = "INSERT INTO `vevent`(`description`, `dtstamp`, `uid`, `dtstart`, `dtend`, " \
+                          "`duration`, `class`, `created`, `geolat`, `geolng`, `lastmod`, `location`, " \
+                          "`organizer`, `priority`, `seq`, `status`, `summary`, `transp`, `url`, `recurid`, " \
+                          "`attachID`, `attendeeID`, `categoriesID`, `commentID`, `contactID`, `exdateID`, " \
+                          "`rstatusID`, `relatedID`, `resourcesID`, `rdateID`, `xpropID`, `ianapropID`, " \
+                          f"`valarmID`, `rruleID`, `vcalendarID`) VALUES ('{self.description}','{self.dtstamp}'," \
+                          f"'{self.uid}','{self.dtstart}','{self.dtend}','{self.duration}','{self.class_}','{self.created}','{self.geolat}'," \
+                          f"'{self.geolng}','{self.lastmod}','{self.location}','{self.organizer}',{self.priority},{self.seq}," \
+                          f"'{self.status}','{self.summary}','{self.transp}','{self.url}','{self.recurid}',{self.dic_ID['attachID']}," \
+                          f"{self.dic_ID['attendeeID']},{self.dic_ID['categoriesID']}, {self.dic_ID['commentsID']}," \
+                          f"{self.dic_ID['contactID']},{self.dic_ID['exdateID']}, {self.dic_ID['rstatusID']}," \
+                          f"{self.dic_ID['relatedID']},{self.dic_ID['resourcesID']},{self.dic_ID['rdateID']}," \
+                          f"{self.dic_ID['xpropID']},{self.dic_ID['ianapropID']},{self.dic_ID['valarmID']}," \
+                          f"{self.dic_ID['rruleID']},{self.vcalendarID})"
+        try:
+            mycursor.execute(sql_insertEvent)
+            db.commit()
+        except:
+            db.rollback()
 
 
-def insertContact(newContact):
-    mycursor = mydb.cursor()
-    sql_insertContact = f"INSERT INTO `Contact`(`contact`) VALUES ('{newContact}')"
+def insertCategory(db, newCategory):
+    mycursor = db.cursor()
+    sql_insertContact = f"INSERT INTO CATEGORIES(CATEGORY) VALUES ('{newCategory}')"
     try:
         mycursor.execute(sql_insertContact)
-        mydb.commit()
+        db.commit()
     except:
-        mydb.rollback()
-    return sql_insertContact
+        db.rollback()
 
 
-def insertResource(newResource):
-    global mydb
-    mycursor = mydb.cursor()
-    sql_insertResource = f"INSERT INTO RESOURCES(RESOURCE) VALUES ('{newResource}')"
+def insertContact(db, newContact):
+    mycursor = db.cursor()
+    sql_insertContact = f"INSERT INTO CONTACT(CONTACT) VALUES ('{newContact}')"
     try:
-        mycursor.execute(sql_insertResource)
-        mydb.commit()
+        mycursor.execute(sql_insertContact)
+        db.commit()
     except:
-        mydb.rollback()
-    return sql_insertResource
+        db.rollback()
+
+
+def insertResource(db, newResource):
+    mycursor = db.cursor()
+    sql_insertContact = f"INSERT INTO RESOURCES(RESOURCE) VALUES ('{newResource}')"
+    try:
+        mycursor.execute(sql_insertContact)
+        db.commit()
+    except:
+        db.rollback()

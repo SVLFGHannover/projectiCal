@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<head>
+    <title>Forms</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <script src=
+"https://code.jquery.com/jquery-1.12.4.min.js">
+    </script>
+    <style type="text/css">
+        .selectt {
+            padding: 10px;
+            display: none;
+            margin-top: 10px;
+            width: 60%;
+        }
+
+        label {
+            margin-right: 20px;
+        }
+    </style>
+</head>
+
+<body><div class="container">
+<h1>User anlegen</h1>
+<p>Name:<input type="text"></p>
+<p>Email:<input type="email"></p>
+<p><input type="submit" value="Profil erstellen"></p>
+</div>
+
+
+
+<div class="container">
+<h1>Termin anlegen</h1>
+    <p><i>Die Radio-Buttons sollen irgendwann so funktionieren, dass nur die angewählten Elemente angezeigt werden. Nun tun sie dies noch nicht.</i></p>
+<h6>Name: <input type="text"></h6>
+    <h6>Beschreibung: <input type="text"></h6>
+
+<p></p>
+    <h6>Kalender auswählen
+    <select name=”calendar”>
+<option value=”hauptkalender”>Hauptkalender</option>
+<option value=”sport”>Sport</option>
+<option value=”berufsschule”>Berufsschule</option>
+</select></h6>
+<p>Von: <input type="date"> <input type="time">
+        <div class="form-check form-check-inline">
+  <input class="form-check-input" type="radio" name="inlineRadioOptions4" id="inlineRadio9" value="option3">
+  <label>Bis</label>
+</div>
+    <div class="form-check form-check-inline">
+  <input class="form-check-input" type="radio" name="inlineRadioOptions4" id="inlineRadio10" value="option3">
+  <label>Dauer</label>
+
+</div>
+    <hr><p>Bis: <input type="date"> <input type="time"></p><hr>
+    <p>Dauer:</p>  <p>Sekunden:<input type="number">Minuten:<input type="number">Stunden:<input type="number"></p>
+    <p>Tage:<input type="number">Wochen:<input type="number">Monate:<input type="number"></p><hr>
+            <div>
+                <h6>Alarm</h6>
+<p>Wann: Sekunden:<input type="number">Minuten:<input type="number">Stunden:<input type="number">Tage:<input type="number"></p>
+   <p>Wie lange: Sekunden:<input type="number">Minuten:<input type="number">Stunden:<input type="number">Tage:<input type="number"></p>
+                <p>Wie oft: <input type="number"></p>
+            <label>
+                <input type="radio" name="alarmRadio"
+                       value="A_Kein">Kein</label>
+            <label>
+                <input type="radio" name="alarmRadio"
+                       value="A_Email">Email</label>
+
+                       <label>
+                <input type="radio" name="alarmRadio"
+                       value="A_Sound">Sound</label>
+            <label>
+                <input type="radio" name="alarmRadio"
+                       value="A_Display">Display</label>
+        </div>
+    <hr>
+            <div class="A_Email">Emailtext:
+                <input type="text" ><p></p>
+                <p>Addressaten:<input type="email"> <button>Add</button> </p>
+        </div>
+    <hr>
+            <div class="A_Sound">
+            Sounddatei:<input type="file">
+        </div>
+    <hr>
+        <div class="A_Display">
+            Angezeigte Nachricht:<input type="text" >
+        </div>
+<hr>
+    <h6>Wiederholend</h6>
+
+        <div>
+            <label>
+                <input type="radio" name="colorRadio"
+                       value="W_Ja">Ja</label>
+            <label>
+                <input type="radio" name="colorRadio"
+                       value="W_Nein">Nein</label>
+        </div>
+        <div class="W_Ja">
+            <p>Wiederholt sich jede(n/s) <input type="number">       <select name = "dropdown">
+                <option value = "Minute">Minute</option>
+                <option value = "Stunde">Stunde</option>
+            <option value = "Tag" selected>Tag</option>
+                <option value = "Woche">Woche</option>
+            <option value = "Monat">Monat</option>
+                <option value = "Jahr">Jahr</option>
+
+         </select></p>
+            <p>Wiederholt sich an:
+         <input type = "checkbox" name = "Montag"> Montag
+         <input type = "checkbox" name = "Dienstag"> Dienstag
+      <input type = "checkbox" name = "Mittwoch"> Mittwoch
+            <input type = "checkbox" name = "Donnerstag"> Donnerstag
+            <input type = "checkbox" name = "Freitag"> Freitag
+            <input type = "checkbox" name = "Samstag"> Samstag
+            <input type = "checkbox" name = "Sonntag"> Sonntag
+            </p>
+                    <div>
+            <label>
+                <input type="radio" name="endingRadio"
+                >Endet am</label>
+            <label>
+                <input type="radio" name="endingRadio"
+                >Wiederholungen</label>
+        </div>
+            <p>Endet am:<input type="date"><input type="time"></p>
+            <p>Nach:<input type="number">Wiederholungen zu ende</p>
+        </div>
+
+    <h6>Gäste / Teilnehmer</h6>
+    Email: <input type="text"> <button>Add</button>  # sucht erst ob der User bereits existiert
+<h6>Location</h6>
+        <div class="form-check form-check-inline">
+  <input class="form-check-input" type="radio" name="inlineRadioOptions3" id="inlineRadio7" value="option3">
+  <label class="form-check-label">GeoData</label>
+</div>
+    <div class="form-check form-check-inline">
+  <input class="form-check-input" type="radio" name="inlineRadioOptions3" id="inlineRadio8" value="option3">
+  <label class="form-check-label">Adresse</label>
+</div>
+    # Geodata = (lat, long) oder Adresse
+    <p>Latitude: <input type="text">Longitude: <input type="text"></p>
+    <p>Ort: <input type="text">Straße: <input type="text"></p>
+
+<h6>Ressourcen</h6>
+    <input type="text"><button>Add</button> # sucht erst, ob Ressource bereits in der Datenbank ist
+<h6>Kategory</h6>
+    <input type="text"><button>Add</button> # sucht erst, ob Kategorie bereits in der Datenbank ist
+
+<p></p>
+<p><input type="submit" value="Event erstellen"></p>
+</div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+
+
+</body>
