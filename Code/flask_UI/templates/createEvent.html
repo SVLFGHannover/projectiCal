@@ -2,127 +2,173 @@
 {% block content %}
 
 <div class="container">
-<h1>Termin anlegen</h1>
-    <p><i>Die Radio-Buttons sollen irgendwann so funktionieren, dass nur die angewählten Elemente angezeigt werden. Nun tun sie dies noch nicht.</i></p>
-<h6>Name: <input type="text"></h6>
+    <h1>Termin anlegen</h1>
+    <p><i>Die Radio-Buttons sollen irgendwann so funktionieren, dass nur die angewählten Elemente angezeigt werden. Nun
+        tun sie dies noch nicht.</i></p>
+    <h6>Name: <input type="text"></h6>
     <h6>Beschreibung: <input type="text"></h6>
 
-<p></p>
+    <p></p>
     <h6>Kalender auswählen
-    <select name=”calendar”>
-<option value=”hauptkalender”>Hauptkalender</option>
-<option value=”sport”>Sport</option>
-<option value=”berufsschule”>Berufsschule</option>
-</select></h6>
-<p>Von: <input type="date"> <input type="time">
-        <div class="form-check form-check-inline">
-  <input class="form-check-input" type="radio" name="inlineRadioOptions4" id="inlineRadio9" value="option3">
-  <label>Bis</label>
-</div>
+        <select name=”calendar”>
+            <option value=”hauptkalender”>Hauptkalender</option>
+            <option value=”sport”>Sport</option>
+            <option value=”berufsschule”>Berufsschule</option>
+        </select></h6>
+    <p>Von: <input type="date"> <input type="time">
+        <script>
+$(document).ready(function(){
+    $("input.s_time").click(function(){
+    	var demovalue = $(this).val();
+        $("div.hide_Time").hide();
+        $("#show"+demovalue).show();
+    });
+});
+
+        </script>
     <div class="form-check form-check-inline">
-  <input class="form-check-input" type="radio" name="inlineRadioOptions4" id="inlineRadio10" value="option3">
-  <label>Dauer</label>
+        <input class="form-check-input s_time" name="demo" type="radio" value="Bis">
+        <label>Bis</label>
+    </div>
+    <div class="form-check form-check-inline">
+        <input class="form-check-input s_time" name="demo" type="radio" value="Dauer">
+        <label>Dauer</label>
 
-</div>
-    <hr><p>Bis: <input type="date"> <input type="time"></p><hr>
-    <p>Dauer:</p>  <p>Sekunden:<input type="number">Minuten:<input type="number">Stunden:<input type="number"></p>
-    <p>Tage:<input type="number">Wochen:<input type="number">Monate:<input type="number"></p><hr>
-            <div>
-                <h6>Alarm</h6>
-<p>Wann: Sekunden:<input type="number">Minuten:<input type="number">Stunden:<input type="number">Tage:<input type="number"></p>
-   <p>Wie lange: Sekunden:<input type="number">Minuten:<input type="number">Stunden:<input type="number">Tage:<input type="number"></p>
-                <p>Wie oft: <input type="number"></p>
-            <label>
-                <input type="radio" name="alarmRadio"
-                       value="A_Kein">Kein</label>
-            <label>
-                <input type="radio" name="alarmRadio"
-                       value="A_Email">Email</label>
+    </div>
+    <div class="hide_Time" id="showBis"><p>Bis: <input type="date"> <input type="time"></p></div>
 
-                       <label>
-                <input type="radio" name="alarmRadio"
-                       value="A_Sound">Sound</label>
-            <label>
-                <input type="radio" name="alarmRadio"
-                       value="A_Display">Display</label>
-        </div>
-    <hr>
-            <div class="A_Email">Emailtext:
-                <input type="text" ><p></p>
-                <p>Addressaten:<input type="email"> <button>Add</button> </p>
-        </div>
-    <hr>
-            <div class="A_Sound">
-            Sounddatei:<input type="file">
-        </div>
-    <hr>
-        <div class="A_Display">
-            Angezeigte Nachricht:<input type="text" >
-        </div>
-<hr>
+    <div class="hide_Time" id="showDauer"><p>Dauer:</p>
+        <p>Sekunden:<input type="number">Minuten:<input type="number">Stunden:<input type="number"></p>
+        <p>Tage:<input type="number">Wochen:<input type="number">Monate:<input type="number"></p></div>
+    <div>
+
+
+        <script>
+$(document).ready(function(){
+    $("input.s_alarm").click(function(){
+    	var demovalue = $(this).val();
+        $("div.hide_Alarm").hide();
+        $("#show"+demovalue).show();
+    });
+});
+
+        </script>
+        <h6>Alarm</h6>
+        <p>Wann: Sekunden:<input type="number">Minuten:<input type="number">Stunden:<input type="number">Tage:<input
+                type="number"></p>
+        <p>Wie lange: Sekunden:<input type="number">Minuten:<input type="number">Stunden:<input
+                type="number">Tage:<input type="number"></p>
+        <p>Wie oft: <input type="number"></p>
+        <label>
+            <input checked class="s_alarm" name="alarmRadio" type="radio" value="KeinAlarm">Kein</label>
+        <label>
+            <input class="s_alarm" name="alarmRadio" type="radio" value="Email">Email</label>
+        <label>
+            <input class="s_alarm" name="alarmRadio" type="radio" value="Sound">Sound</label>
+        <label>
+            <input class="s_alarm" name="alarmRadio" type="radio" value="Display">Display</label>
+    </div>
+    <div class="hide_Alarm" id="showEmail">
+        Emailtext:<input type="text">
+        <p></p>
+        <p>Addressaten:<input type="email">
+            <button>Add</button>
+        </p>
+    </div>
+    <div class="hide_Alarm" id="showSound">
+        Sounddatei:<input type="file"></div>
+    <div class="hide_Alarm" id="showDisplay">
+        Angezeigte Nachricht:<input type="text"></div>
+
+
+    <script>
+$(document).ready(function(){
+    $("input.s_rrule").click(function(){
+    	var demovalue = $(this).val();
+        $("div.hide_RRule").hide();
+        $("#show"+demovalue).show();
+    });
+});
+
+    </script>
     <h6>Wiederholend</h6>
 
+    <div>
+        <label>
+            <input checked class="s_rrule" name="colorRadio"
+                   type="radio" value="RRule_No">Nein</label>
+        <label>
+            <input class="s_rrule" name="colorRadio" type="radio"
+                   value="RRule_Yes">Ja</label>
+    </div>
+    <div class="hide_RRule" id="showRRule_Yes">
+        <p>Wiederholt sich jede(n/s) <input type="number"> <select name="dropdown">
+            <option value="Minute">Minute</option>
+            <option value="Stunde">Stunde</option>
+            <option selected value="Tag">Tag</option>
+            <option value="Woche">Woche</option>
+            <option value="Monat">Monat</option>
+            <option value="Jahr">Jahr</option>
+
+        </select></p>
+        <p>Wiederholt sich an:
+            <input name="Montag" type="checkbox"> Montag
+            <input name="Dienstag" type="checkbox"> Dienstag
+            <input name="Mittwoch" type="checkbox"> Mittwoch
+            <input name="Donnerstag" type="checkbox"> Donnerstag
+            <input name="Freitag" type="checkbox"> Freitag
+            <input name="Samstag" type="checkbox"> Samstag
+            <input name="Sonntag" type="checkbox"> Sonntag
+        </p>
         <div>
             <label>
-                <input type="radio" name="colorRadio"
-                       value="W_Ja">Ja</label>
-            <label>
-                <input type="radio" name="colorRadio"
-                       value="W_Nein">Nein</label>
-        </div>
-        <div class="W_Ja">
-            <p>Wiederholt sich jede(n/s) <input type="number">       <select name = "dropdown">
-                <option value = "Minute">Minute</option>
-                <option value = "Stunde">Stunde</option>
-            <option value = "Tag" selected>Tag</option>
-                <option value = "Woche">Woche</option>
-            <option value = "Monat">Monat</option>
-                <option value = "Jahr">Jahr</option>
-
-         </select></p>
-            <p>Wiederholt sich an:
-         <input type = "checkbox" name = "Montag"> Montag
-         <input type = "checkbox" name = "Dienstag"> Dienstag
-      <input type = "checkbox" name = "Mittwoch"> Mittwoch
-            <input type = "checkbox" name = "Donnerstag"> Donnerstag
-            <input type = "checkbox" name = "Freitag"> Freitag
-            <input type = "checkbox" name = "Samstag"> Samstag
-            <input type = "checkbox" name = "Sonntag"> Sonntag
-            </p>
-                    <div>
-            <label>
-                <input type="radio" name="endingRadio"
+                <input name="endingRadio" type="radio"
                 >Endet am</label>
             <label>
-                <input type="radio" name="endingRadio"
+                <input name="endingRadio" type="radio"
                 >Wiederholungen</label>
         </div>
-            <p>Endet am:<input type="date"><input type="time"></p>
-            <p>Nach:<input type="number">Wiederholungen zu ende</p>
-        </div>
+        <p>Endet am:<input type="date"><input type="time"></p>
+        <p>Nach:<input type="number">Wiederholungen zu ende</p>
+    </div>
 
     <h6>Gäste / Teilnehmer</h6>
-    Email: <input type="text"> <button>Add</button>  # sucht erst ob der User bereits existiert
-<h6>Location</h6>
-        <div class="form-check form-check-inline">
-  <input class="form-check-input" type="radio" name="inlineRadioOptions3" id="inlineRadio7" value="option3">
-  <label class="form-check-label">GeoData</label>
-</div>
+    Email: <input type="text">
+    <button>Add</button>
+    # sucht erst ob der User bereits existiert#
+    <script>
+$(document).ready(function(){
+    $("input.s_loc").click(function(){
+    	var demovalue = $(this).val();
+        $("div.hide_Loc").hide();
+        $("#show"+demovalue).show();
+    });
+});
+
+    </script>
+    <h6>Location</h6>
     <div class="form-check form-check-inline">
-  <input class="form-check-input" type="radio" name="inlineRadioOptions3" id="inlineRadio8" value="option3">
-  <label class="form-check-label">Adresse</label>
-</div>
-    # Geodata = (lat, long) oder Adresse
-    <p>Latitude: <input type="text">Longitude: <input type="text"></p>
-    <p>Ort: <input type="text">Straße: <input type="text"></p>
+        <input class="form-check-input s_loc" name="inlineRadioOptions3" type="radio" value="GeoData">
+        <label class="form-check-label">GeoData</label>
+    </div>
+    <div class="form-check form-check-inline">
+        <input class="form-check-input s_loc" name="inlineRadioOptions3" type="radio" value="Address">
+        <label class="form-check-label">Adresse</label>
+    </div>
+    <div class="hide_Loc" id="showGeoData"><p>Latitude: <input type="text">Longitude: <input type="text"></p></div>
+    <div class="hide_Loc" id="showAddress"><p>Ort: <input type="text">Straße: <input type="text"></p></div>
 
-<h6>Ressourcen</h6>
-    <input type="text"><button>Add</button> # sucht erst, ob Ressource bereits in der Datenbank ist
-<h6>Kategory</h6>
-    <input type="text"><button>Add</button> # sucht erst, ob Kategorie bereits in der Datenbank ist
+    <h6>Ressourcen</h6>
+    <input type="text">
+    <button>Add</button>
+    # sucht erst, ob Ressource bereits in der Datenbank ist
+    <h6>Kategory</h6>
+    <input type="text">
+    <button>Add</button>
+    # sucht erst, ob Kategorie bereits in der Datenbank ist
 
-<p></p>
-<p><input type="submit" value="Event erstellen"></p>
+    <p></p>
+    <p><input type="submit" value="Event erstellen"></p>
 </div>
 
 
