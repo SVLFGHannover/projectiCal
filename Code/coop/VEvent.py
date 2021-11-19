@@ -2,9 +2,9 @@ import datetime
 
 
 class VEvent:
-    def __init__(self, description, dtstart, dtend, vcalendarID):
+    def __init__(self, summary, description, dtstart, dtend, vcalendarID):
         self.description = description
-        self.summary = ""                                                      # Title of Event
+        self.summary = summary                                                      # Title of Event
         self.class_ = ""                                                       # Access classification ( public / private )
         self.priority = 0                                                      # 1 (lowest) - 9 (highest), 0 = undefined
         self.dtstamp = datetime.datetime.now()                                 # Time of Creation
@@ -29,8 +29,7 @@ class VEvent:
         self.transp = ""                                            # Identifier, if an event takes time ( either opaque or transparent )
         self.url = ""                                                       # Link to the iCalendar-Object
 
-    def insertEvent(self, db):
-        mycursor = db.cursor()
+    def insertEvent(self):
         sql_insertEvent = "INSERT INTO `vevent`(`description`, `dtstamp`, `uid`, `dtstart`, `dtend`, " \
                           "`duration`, `class`, `created`, `geolat`, `geolng`, `lastmod`, `location`, " \
                           "`organizer`, `priority`, `seq`, `status`, `summary`, `transp`, `url`, `recurid`, " \
@@ -45,11 +44,7 @@ class VEvent:
                           f"{self.dic_ID['relatedID']},{self.dic_ID['resourcesID']},{self.dic_ID['rdateID']}," \
                           f"{self.dic_ID['xpropID']},{self.dic_ID['ianapropID']},{self.dic_ID['valarmID']}," \
                           f"{self.dic_ID['rruleID']},{self.vcalendarID})"
-        try:
-            mycursor.execute(sql_insertEvent)
-            db.commit()
-        except:
-            db.rollback()
+        return sql_insertEvent
 
 
 def insertCategory(db, newCategory):

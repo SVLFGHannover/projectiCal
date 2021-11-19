@@ -4,7 +4,7 @@ from flask_mysqldb import MySQL
 import MySQLdb.cursors
 from coop.User import User
 from coop.VCalendar import VCalendar
-
+from coop.VEvent import VEvent
 
 @app.route('/pythonlogin/', methods=['GET', 'POST'])
 def login():
@@ -36,14 +36,54 @@ def about():
 @app.route("/home")
 def home():
     if 'loggedin' in session:
+        """events = None
+        cursor = db.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('SELECT ID FROM vcalendar WHERE userID = %s', (session["ID"],))
+        calendars_T = cursor.fetchall()
+        calendars = list(calendars_T)
+        print(calendars[0])
+        for e in calendars:
+            for x, y in e.items():
+                print(x)
+                cursor.execute('SELECT * FROM vevent WHERE ID = %s', (y))
+                events_T = cursor.fetchall()
+                events.add(events_T)
+        print(events)"""
         return render_template("home.html", loggedin=True, msg="")
     return render_template("home.html", msg="", loggedin=False)
 
 
-@app.route("/createEvent")
+@app.route("/createEvent", methods=['GET', 'POST'])
 def createEvent():
     if 'loggedin' in session:
-        return render_template("createEvent.html", title='Account', loggedin=True)
+        # Dropdown Calendars
+        cursor = db.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('SELECT name FROM vcalendar WHERE userID = %s', (session["ID"],))
+        calendars = cursor.fetchall()
+        calendars_L = list(calendars)
+        if request.method == 'POST':
+            name_E = request.form["name_E"]
+            beschreibung_E = request.form["beschreibung_E"]
+            calendarname = request.form["test"]
+            cursor = db.connection.cursor(MySQLdb.cursors.DictCursor)
+            cursor.execute('SELECT ID FROM vcalendar WHERE name = %s AND userID = %s', (calendarname, session["ID"],))
+            calendarCatch = cursor.fetchone()
+            calendarID = calendarCatch["ID"]
+            start_date, start_time, end_date, end_time = "", "", "", ""
+
+            try:
+                start_date = request.form["start_date"]
+                start_time = request.form["start_time"]
+                dtstart = start_date + " " + start_time
+                end_date = request.form["end_date"]
+                end_time = request.form["end_time"]
+                dtend = end_date + " " + end_time
+            except:
+                print("")
+            event = VEvent(name_E, beschreibung_E, dtstart, dtend, calendarID)
+
+            return render_template("createEvent.html", title='Account', loggedin=True, calendars=calendars_L, msg="Event wurde erstellt")
+        return render_template("createEvent.html", title='Account', loggedin=True, calendars=calendars_L)
     else:
         redirect(url_for('home'))
 
