@@ -13,3 +13,7 @@ footer {
   height:2.5rem;
   width:70%;
 }
+
+.hide_Time, .hide_Alarm, .hide_RRule, .hide_Loc{
+    display:none;
+}

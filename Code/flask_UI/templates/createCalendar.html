@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container">
+<h1>Kalender anlegen</h1>
+<form action="{{ url_for('createCalendar') }}" method="post" autocomplete="off">
+<p>Name: <input type="text" id="name_C" name="name_C" required></p>
+    <p>Beschreibung: <input type="text" name="beschreibung" id="beschreibung"></p>
+
+<input type="submit" value="Kalender erstellen">
+    <div class="msg">{{ msg }}</div>
+</form>
+
+</div>
+{% endblock content %}
