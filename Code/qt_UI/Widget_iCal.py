@@ -1,4 +1,5 @@
-from icalendar import Calendar, Event
+from datetime import timedelta
+from icalendar import Calendar, Event, Alarm
 import PyQt6.QtWidgets
 import mysql.connector
 
@@ -96,7 +97,7 @@ def request_name(name):
     mycursor = mydb.cursor()
     mycursor.execute(
         "SELECT summary, dtstart, dtend, description, rruleID  FROM VEvent WHERE attendeeID = "
-        "(SELECT ID FROM user WHERE name = '" + name + "')")
+        "(SELECT ID FROM user WHERE name = '{0}')".format(name))
     myresult_events = mycursor.fetchall()
     print(myresult_events)
     for cal in myresult_events:
@@ -104,6 +105,10 @@ def request_name(name):
                   ', Dauer:' + str(cal[2] - cal[1]) + ', Beschreibung: ' + cal[3] + '\n'
         if cal[4] is None:
             events += 'Keine Wiederholung' + '\n'
+        else:
+            mycursor.execute("SELECT freq FROM RRule WHERE ID = {0}".format(cal[4]))
+            rule = mycursor.fetchall()[0][0]
+            events += 'Wiederholung - ' + rule + '\n'
     if myresult_events:
         return str(events)
     else:
@@ -120,7 +125,7 @@ def request_cal(name):
     myresult_cal = mycursor.fetchall()
     print(myresult_cal)
     for cal in myresult_cal:
-        calendars += str(cal[0]) + ' - ' + cal[2] + '\n'
+        calendars += 'Kalender - ' + cal[2] + '\n'
     if myresult_cal:
         return str(calendars)
     else:
@@ -128,12 +133,22 @@ def request_cal(name):
 
 
 # Event zum Kalender zufügen
-def add_event(summary, start, end, description):
+def add_event(summary, start, end, description, alarm, rule):
     event_cal = Event()
     event_cal.add('summary', summary)
     event_cal.add('description', description)
     event_cal.add('dtstart', start)
     event_cal.add('dtend', end)
+
+    if rule is not None:
+        mycursor = mydb.cursor()
+        mycursor.execute(
+            "SELECT freq, RRule.interval, until FROM RRule WHERE ID = {0}".format(str(rule)))
+        rrule = mycursor.fetchall()[0]
+        event_cal.add('rrule', {'freq': rrule[0], 'interval': rrule[1], 'until': rrule[2]})
+        print(rrule)
+
+
     return event_cal
 
 
@@ -141,14 +156,14 @@ def add_event(summary, start, end, description):
 def ics_event(name):
     mycursor = mydb.cursor()
     mycursor.execute(
-        "SELECT summary, dtstart, dtend, description, valarmID  FROM VEvent WHERE attendeeID = "
-        "(SELECT ID FROM user WHERE name = '" + name + "')")
+        "SELECT summary, dtstart, dtend, description, valarmID, rruleID  FROM VEvent WHERE attendeeID = "
+        "(SELECT ID FROM user WHERE name = '{0}')".format(name))
     ics_events = mycursor.fetchall()
     if ics_events:
         cal = Calendar()
         cal.add('prodid', 'Events ' + name)
         for ev in ics_events:
-            cal.add_component(add_event(ev[0], ev[1], ev[2], ev[3]))
+            cal.add_component(add_event(ev[0], ev[1], ev[2], ev[3], ev[4], ev[5]))
         f = open('Events_' + name + '.ics', 'wb')
         f.write(cal.to_ical())
         f.close()
@@ -161,18 +176,19 @@ def ics_event(name):
 def ics_cal(name):
     mycursor = mydb.cursor()
     mycursor.execute(
-        "SELECT * FROM VCalendar WHERE userID = "
-        "(SELECT ID FROM user WHERE name = '" + name + "')")
+        "SELECT * FROM VCalendar WHERE userID =(SELECT ID FROM user WHERE name = '{0}')".format(name))
     myresult_cal = mycursor.fetchall()
     for cal in myresult_cal:
         mycursor = mydb.cursor()
         mycursor.execute(
-            "SELECT summary, dtstart, dtend, description  FROM VEvent WHERE vcalendarID = " + str(cal[0]) + "")
+            "SELECT summary, dtstart, dtend, description, valarmID, "
+            "rruleID  FROM VEvent WHERE vcalendarID = {0}".format(
+                str(cal[0])))
         cal_ev = mycursor.fetchall()
         calendar = Calendar()
         calendar.add('prodid', 'Events ' + cal[2])
         for ev in cal_ev:
-            calendar.add_component(add_event(ev[0], ev[1], ev[2], ev[3]))
+            calendar.add_component(add_event(ev[0], ev[1], ev[2], ev[3], ev[4], ev[5]))
         f = open('Events_Calendar - ' + cal[2] + '.ics', 'wb')
         f.write(calendar.to_ical())
         f.close()
