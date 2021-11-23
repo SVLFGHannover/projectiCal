@@ -148,8 +148,29 @@ def add_event(summary, start, end, description, alarm, rule):
         event_cal.add('rrule', {'freq': rrule[0], 'interval': rrule[1], 'until': rrule[2]})
         print(rrule)
 
+    if alarm is not None:
+        mycursor = mydb.cursor()
+        mycursor.execute(
+            "SELECT action, summary, description, VAlarm.trigger, "
+            "VAlarm.repeat, duration FROM VAlarm WHERE ID = {0}".format(
+                str(alarm)))
+        al = mycursor.fetchall()[0]
+        print(al)
+        event_cal.add_component(add_alarm(al))
 
     return event_cal
+
+
+# Alarm zufügen
+def add_alarm(al):
+    alarm = Alarm()
+    alarm.add('action', al[0])
+    alarm.add('summary', al[1])
+    alarm.add('descriptiom', al[2])
+    alarm.add('trigger', timedelta(minutes=-int(al[3])))
+    alarm.add('repeat', al[4])
+    alarm.add('duration', timedelta(minutes=+int(al[5])))
+    return alarm
 
 
 # ics-Datei zu allen Events erstellen
