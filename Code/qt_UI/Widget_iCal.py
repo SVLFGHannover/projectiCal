@@ -1,6 +1,6 @@
 from datetime import timedelta
 from icalendar import Calendar, Event, Alarm
-import PyQt6.QtWidgets
+from PyQt6.QtWidgets import *
 import mysql.connector
 
 # Datenbankparameter
@@ -12,7 +12,7 @@ mydb = mysql.connector.connect(
 )
 
 
-class ICal(PyQt6.QtWidgets.QWidget):
+class ICal(QWidget):
     # Widgetseigenschaften
     def __init__(self):
         super().__init__()
@@ -27,27 +27,27 @@ class ICal(PyQt6.QtWidgets.QWidget):
 
     def setup(self):
         # Tabs definieren
-        tab1 = PyQt6.QtWidgets.QWidget()
-        tab2 = PyQt6.QtWidgets.QWidget()
+        tab1 = QWidget()
+        tab2 = QWidget()
 
-        tabs = PyQt6.QtWidgets.QTabWidget()
+        tabs = QTabWidget()
         tabs.addTab(tab1, 'Event')
         tabs.addTab(tab2, 'Calendar')
 
-        tab1.layout = PyQt6.QtWidgets.QVBoxLayout(self)
-        name_label = PyQt6.QtWidgets.QLabel('Name', self)
+        tab1.layout = QVBoxLayout(self)
+        name_label = QLabel('Name', self)
 
-        name_line = PyQt6.QtWidgets.QLineEdit(self)
+        name_line = QLineEdit(self)
         name_line.editingFinished.connect(lambda: name_box.setText(request_name(name_line.text())))
         name_line.editingFinished.connect(lambda: name_btn_ics.show())
 
-        name_btn_q = PyQt6.QtWidgets.QPushButton('Conect DB', self)
+        name_btn_q = QPushButton('Conect DB', self)
         name_btn_q.clicked.connect(lambda: name_box.setText(request_name(name_line.text())))
         name_btn_q.clicked.connect(lambda: name_btn_ics.show())
 
-        name_box = PyQt6.QtWidgets.QTextEdit(self)
+        name_box = QTextEdit(self)
 
-        name_btn_ics = PyQt6.QtWidgets.QPushButton('Export ICS', self)
+        name_btn_ics = QPushButton('Export ICS', self)
         name_btn_ics.clicked.connect(lambda: name_box.setText(ics_event(name_line.text())))
         name_btn_ics.hide()
 
@@ -60,20 +60,20 @@ class ICal(PyQt6.QtWidgets.QWidget):
         # Tab nach Name suchen
         tab1.setLayout(tab1.layout)
 
-        tab2.layout = PyQt6.QtWidgets.QVBoxLayout(self)
-        cal_label = PyQt6.QtWidgets.QLabel('Name', self)
+        tab2.layout = QVBoxLayout(self)
+        cal_label = QLabel('Name', self)
 
-        cal_line = PyQt6.QtWidgets.QLineEdit(self)
+        cal_line = QLineEdit(self)
         cal_line.editingFinished.connect(lambda: cal_box.setText(request_cal(cal_line.text())))
         cal_line.editingFinished.connect(lambda: cal_btn_ics.show())
 
-        cal_btn_q = PyQt6.QtWidgets.QPushButton('Conect DB', self)
+        cal_btn_q = QPushButton('Conect DB', self)
         cal_btn_q.clicked.connect(lambda: cal_box.setText(request_cal(cal_line.text())))
         cal_btn_q.clicked.connect(lambda: cal_btn_ics.show())
 
-        cal_box = PyQt6.QtWidgets.QTextEdit(self)
+        cal_box = QTextEdit(self)
 
-        cal_btn_ics = PyQt6.QtWidgets.QPushButton('Export ICS', self)
+        cal_btn_ics = QPushButton('Export ICS', self)
         cal_btn_ics.clicked.connect(lambda: cal_box.setText(ics_cal(cal_line.text())))
         cal_btn_ics.hide()
 
@@ -86,7 +86,7 @@ class ICal(PyQt6.QtWidgets.QWidget):
         # Tab suchen nach Kalender
         tab2.setLayout(tab2.layout)
 
-        vbox = PyQt6.QtWidgets.QVBoxLayout()
+        vbox = QVBoxLayout()
         vbox.addWidget(tabs)
         self.setLayout(vbox)
 
@@ -121,7 +121,7 @@ def request_cal(name):
     mycursor = mydb.cursor()
     mycursor.execute(
         "SELECT * FROM VCalendar WHERE userID = "
-        "(SELECT ID FROM user WHERE name = '" + name + "')")
+        "(SELECT ID FROM user WHERE name = '{0}')".format(name))
     myresult_cal = mycursor.fetchall()
     print(myresult_cal)
     for cal in myresult_cal:
@@ -146,7 +146,6 @@ def add_event(summary, start, end, description, alarm, rule):
             "SELECT freq, RRule.interval, until FROM RRule WHERE ID = {0}".format(str(rule)))
         rrule = mycursor.fetchall()[0]
         event_cal.add('rrule', {'freq': rrule[0], 'interval': rrule[1], 'until': rrule[2]})
-        print(rrule)
 
     if alarm is not None:
         mycursor = mydb.cursor()
@@ -155,7 +154,6 @@ def add_event(summary, start, end, description, alarm, rule):
             "VAlarm.repeat, duration FROM VAlarm WHERE ID = {0}".format(
                 str(alarm)))
         al = mycursor.fetchall()[0]
-        print(al)
         event_cal.add_component(add_alarm(al))
 
     return event_cal
@@ -185,42 +183,57 @@ def ics_event(name):
         cal.add('prodid', 'Events ' + name)
         for ev in ics_events:
             cal.add_component(add_event(ev[0], ev[1], ev[2], ev[3], ev[4], ev[5]))
-        f = open('Events_' + name + '.ics', 'wb')
-        f.write(cal.to_ical())
-        f.close()
-        return 'Events als ics-Datei exportiert!'
+        ics = save_dialog('Speichern Events von ' + name)
+        if ics == '':
+            return 'Keine Events exportiert!'
+        else:
+            f = open(ics + '.ics', 'wb')
+            f.write(cal.to_ical())
+            f.close()
+            return 'Events als ics-Datei exportiert!'
     else:
         return 'Keine Events!'
 
 
 # ics-Datei für Kalender erstellen
 def ics_cal(name):
+    mess = ''
     mycursor = mydb.cursor()
     mycursor.execute(
         "SELECT * FROM VCalendar WHERE userID =(SELECT ID FROM user WHERE name = '{0}')".format(name))
     myresult_cal = mycursor.fetchall()
-    for cal in myresult_cal:
-        mycursor = mydb.cursor()
-        mycursor.execute(
-            "SELECT summary, dtstart, dtend, description, valarmID, "
-            "rruleID  FROM VEvent WHERE vcalendarID = {0}".format(
-                str(cal[0])))
-        cal_ev = mycursor.fetchall()
-        calendar = Calendar()
-        calendar.add('prodid', 'Events ' + cal[2])
-        for ev in cal_ev:
-            calendar.add_component(add_event(ev[0], ev[1], ev[2], ev[3], ev[4], ev[5]))
-        f = open('Events_Calendar - ' + cal[2] + '.ics', 'wb')
-        f.write(calendar.to_ical())
-        f.close()
     if myresult_cal:
-        return 'Kalender als ics-Dateien exportiert!'
+        for cal in myresult_cal:
+            mycursor = mydb.cursor()
+            mycursor.execute(
+                "SELECT summary, dtstart, dtend, description, valarmID, "
+                "rruleID  FROM VEvent WHERE vcalendarID = {0}".format(
+                    str(cal[0])))
+            cal_ev = mycursor.fetchall()
+            calendar = Calendar()
+            calendar.add('prodid', 'Events ' + cal[2])
+            for ev in cal_ev:
+                calendar.add_component(add_event(ev[0], ev[1], ev[2], ev[3], ev[4], ev[5]))
+            ics = save_dialog('Speichern Events von Kalender ' + cal[2])
+            if ics == '':
+                mess += 'Keine Events von Kalender {0} exportiert!'.format(str(cal[2])) + '\n'
+            else:
+                f = open(ics + '.ics', 'wb')
+                f.write(calendar.to_ical())
+                f.close()
+                mess += 'Events von Kalender {0} als ics-Datei exportiert!'.format(str(cal[2])) + '\n'
+        return mess
     else:
         return 'Keine Kalender!'
 
 
+def save_dialog(name):
+    n = QFileDialog.getSaveFileName(caption=name)
+    return n[0]
+
+
 if __name__ == "__main__":
-    app = PyQt6.QtWidgets.QApplication([])
+    app = QApplication([])
     window = ICal()
     window.show()
     app.exec()
