@@ -17,3 +17,12 @@ footer {
 .hide_Time, .hide_Alarm, .hide_RRule, .hide_Loc{
     display:none;
 }
+
+.albumcard {
+  padding-right:5px;
+}
+
+.test {
+margin: 0 auto;
+margin-bottom:5%;
+}

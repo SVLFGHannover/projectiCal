@@ -4,7 +4,8 @@ from flask_mysqldb import MySQL
 import MySQLdb.cursors
 from coop.User import User
 from coop.VCalendar import VCalendar
-from coop.VEvent import VEvent
+from coop.VEvent import VEvent, insertCategory
+
 
 @app.route('/pythonlogin/', methods=['GET', 'POST'])
 def login():
@@ -21,7 +22,7 @@ def login():
             session['name'] = account['name']
             return redirect(url_for('home'))
         else:
-            msg = 'Incorrect username/password!'
+            msg = 'Falscher Name oder falsche Email!'
     return render_template('home.html', msg=msg)
 
 
@@ -36,20 +37,19 @@ def about():
 @app.route("/home")
 def home():
     if 'loggedin' in session:
-        """events = None
+        events = []
         cursor = db.connection.cursor(MySQLdb.cursors.DictCursor)
         cursor.execute('SELECT ID FROM vcalendar WHERE userID = %s', (session["ID"],))
         calendars_T = cursor.fetchall()
         calendars = list(calendars_T)
-        print(calendars[0])
+
         for e in calendars:
             for x, y in e.items():
-                print(x)
-                cursor.execute('SELECT * FROM vevent WHERE ID = %s', (y))
+                cursor.execute(f'SELECT * FROM vevent WHERE vcalendarID = {int(y)}')
                 events_T = cursor.fetchall()
-                events.add(events_T)
-        print(events)"""
-        return render_template("home.html", loggedin=True, msg="")
+                for k in list(events_T):
+                    events.append(k)
+        return render_template("home.html", loggedin=True, msg="", events = events)
     return render_template("home.html", msg="", loggedin=False)
 
 
@@ -69,20 +69,45 @@ def createEvent():
             cursor.execute('SELECT ID FROM vcalendar WHERE name = %s AND userID = %s', (calendarname, session["ID"],))
             calendarCatch = cursor.fetchone()
             calendarID = calendarCatch["ID"]
-            start_date, start_time, end_date, end_time = "", "", "", ""
-
+            start_date, start_time, end_date, end_time, category = "", "", "", "", ""
+            lat, lon, city, street = "", "", "", ""
             try:
                 start_date = request.form["start_date"]
                 start_time = request.form["start_time"]
                 dtstart = start_date + " " + start_time
+
                 end_date = request.form["end_date"]
                 end_time = request.form["end_time"]
                 dtend = end_date + " " + end_time
+
+                dur_sec = request.form["dur_sec"]
+                dur_min = request.form["dur_min"]
+                dur_hour = request.form["dur_hour"]
+                dur_day = request.form["dur_day"]
+
+                category = request.form["category"]
+                lat = request.form["lat"]
+                lon = request.form["lon"]
+                street = request.form["street"]
+                city = request.form["city"]
             except:
                 print("")
             event = VEvent(name_E, beschreibung_E, dtstart, dtend, calendarID)
-
-            return render_template("createEvent.html", title='Account', loggedin=True, calendars=calendars_L, msg="Event wurde erstellt")
+            if category:
+                sql_category = insertCategory(category)
+                cursor.execute(sql_category)
+                db.connection.commit()
+                event.dic_ID["categoriesID"] = "(SELECT ID FROM categories ORDER BY ID DESC LIMIT 1)"
+            if lat and lon:
+                event.geolat = lat
+                event.geolng = lon
+            elif city:
+                event.location = city + ", " + street
+            cursor.execute(event.insertEvent())
+            print(event.insertEvent())
+            db.connection.commit()
+            return render_template("createEvent.html", title='Account', loggedin=True, calendars=calendars_L,
+                                   msg="Event wurde erstellt")
         return render_template("createEvent.html", title='Account', loggedin=True, calendars=calendars_L)
     else:
         redirect(url_for('home'))
@@ -102,11 +127,11 @@ def createCalendar():
             cursor.execute('SELECT * FROM vcalendar WHERE name = %s', (name,))
             calender = cursor.fetchone()
             if calender:
-                msg = 'Calendar already exists!'
+                msg = 'Dieser Kalender existiert bereits!'
             else:
                 vcalendar = VCalendar(session["ID"], name, beschreibung)
                 cursor.execute(vcalendar.insertCalendar())
-                msg="Kalender wurde erstellt."
+                msg = "Kalender wurde erstellt."
                 db.connection.commit()
             return render_template("createCalendar.html", title='create Calendar', loggedin=True, msg=msg)
         else:
@@ -136,11 +161,11 @@ def register():
         email = request.form['email']
         # Check if account exists using MySQL
         cursor = db.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute('SELECT * FROM user WHERE name = %s', (name,))
+        cursor.execute('SELECT * FROM user WHERE email = %s', (email,))
         account = cursor.fetchone()
         # If account exists show error and validation checks
         if account:
-            msg = 'Account already exists!'
+            msg = 'Diese Email wird bereits verwendet.'
         else:
             # Account doesnt exists and the form data is valid, now insert new account into accounts table
             user = User(name, email)
@@ -150,9 +175,18 @@ def register():
                                  name + "s Startkalender")
             cursor.execute(calendar.insertCalendar())
             db.connection.commit()
-            msg = 'You have successfully registered!'
-    elif request.method == 'POST':
-        # Form is empty... (no POST data)
-        msg = 'Please fill out the form!'
+            msg = 'Du wurdest erfolgreich registriert!'
     # Show registration form with message (if any)
     return render_template('register.html', msg=msg)
+
+@app.route('/createICS', methods=['GET', 'POST'])
+def createICS():
+    if session["loggedin"]:
+        events = []
+        cursor = db.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('SELECT * FROM vcalendar WHERE userID = %s', (session["ID"],))
+        calendars_T = cursor.fetchall()
+        calendars = list(calendars_T)
+        return render_template("createICS.html", loggedin=True, msg="", calendars=calendars)
+    else:
+        redirect(url_for('home'))

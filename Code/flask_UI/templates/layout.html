@@ -31,23 +31,26 @@
         </li>
         {% if loggedin %}
         <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('createEvent') }}">Create an Event</a>
+          <a class="nav-link" href="{{ url_for('createEvent') }}">Termin anlegen</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('createCalendar') }}">Create a Calender</a>
+          <a class="nav-link" href="{{ url_for('createCalendar') }}">Kalender anlegen</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('createICS') }}">ICS-Kalender erstellen</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
         </li>
         {% else %}
         <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('register') }}">Register</a>
+          <a class="nav-link" href="{{ url_for('register') }}">Registrieren</a>
         </li>
         {% endif %}
         <li class="nav-item">
-          <a class="nav-link" href="/about">About</a>
+          <a class="nav-link" href="/about">Dokumentation</a>
         </li>
-
+      </ul>
     </div>
   </div>
 </nav>
@@ -66,8 +69,8 @@
     </a>
 
     <ul class="nav col-md-4 justify-content-end">
-      <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Home</a></li>
-      <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">About</a></li>
+      <li class="nav-item"><a href="{{ url_for('home') }}" class="nav-link px-2 text-muted">Home</a></li>
+      <li class="nav-item"><a href="{{ url_for('about') }}" class="nav-link px-2 text-muted">Dokumentation</a></li>
     </ul>
   </footer>
 </div>  </div>

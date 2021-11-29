@@ -47,14 +47,9 @@ class VEvent:
         return sql_insertEvent
 
 
-def insertCategory(db, newCategory):
-    mycursor = db.cursor()
+def insertCategory(newCategory):
     sql_insertContact = f"INSERT INTO CATEGORIES(CATEGORY) VALUES ('{newCategory}')"
-    try:
-        mycursor.execute(sql_insertContact)
-        db.commit()
-    except:
-        db.rollback()
+    return sql_insertContact
 
 
 def insertContact(db, newContact):
