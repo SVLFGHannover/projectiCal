@@ -29,7 +29,7 @@
         <div class="form-row">
             <div class="form-group col-md-3">
                 <label>Start</label>
-                <input class="form-control" name="start_date" required type="date">
+                <input class="form-control" name="start_date" type="date" required>
                 <input class="form-control" name="start_time" type="time">
             </div>
 
@@ -68,14 +68,16 @@ $(document).ready(function(){
                 <div class="hide_Time" id="showDauer">
                     <label></label>
                     <div class="form-row">
-                        <div class="col"><input class="form-control" id="sec" type="number" name="dur_sec"><label
+                        <div class="col"><input class="form-control" id="sec" type="number" name="dur_sec" min="0"><label
                                 class="form-check-label" for="sec">Sekunden</label></div>
-                        <div class="col"><input class="form-control" id="min" type="number" name="dur_min"><label
+                        <div class="col"><input class="form-control" id="min" type="number" name="dur_min" min="0"><label
                                 class="form-check-label" for="min">Minuten</label></div>
-                        <div class="col"><input class="form-control" id="hour" type="number" name="dur_hour"><label
+                        <div class="col"><input class="form-control" id="hour" type="number" name="dur_hour" min="0"><label
                                 class="form-check-label" for="hour">Stunden</label></div>
-                        <div class="col"><input class="form-control" id="day" type="number" name="dur_day"><label
+                        <div class="col"><input class="form-control" id="day" type="number" name="dur_day" min="0"><label
                                 class="form-check-label" for="day">Tage</label></div>
+                        <div class="col"><input class="form-control" id="week" type="number" name="dur_week" min="0"><label
+                                class="form-check-label" for="week">Wochen</label></div>
                     </div>
 
                 </div>
@@ -101,7 +103,6 @@ else {$("#showRest").show();}
         <div class="form-row">
             <div class="form-group col-md-3">
             <h6>Alarm</h6>
-
             <label>
                 <input checked class="s_alarm" name="alarmRadio" type="radio" value="KeinAlarm">Kein</label>
             <label>
@@ -110,28 +111,42 @@ else {$("#showRest").show();}
                 <input class="s_alarm" name="alarmRadio" type="radio" value="Sound">Sound</label>
             <label>
                 <input class="s_alarm" name="alarmRadio" type="radio" value="Display">Display</label>
-        </div>
-        <div class="hide_Alarm" id="showRest"><p>Wann: Sekunden:<input type="number">Minuten:<input type="number">Stunden:<input
-                type="number">Tage:<input
-                type="number"></p>
-            <p>Wie lange: Sekunden:<input type="number">Minuten:<input type="number">Stunden:<input
-                    type="number">Tage:<input type="number"></p>
-            <p>Wie oft: <input type="number"></p>
+                </div>
+
+        <div class="hide_Alarm" id="showRest">
+            <div class="form-row">
+            <div class="col-2">Wann</div>
+                <div class="col"><input type="number" name="whenA_sec" value="0"><label>Sekunden</label></div>
+                <div class="col"><input type="number" name="whenA_min" value="0"><label>Minuten</label></div>
+                <div class="col"><input type="number" name="whenA_hour" value="0"><label>Stunden</label></div>
+                <div class="col"><input type="number" name="whenA_day" value="0"><label>Tage</label></div>
+                </div>
+            <hr>
+            <div class="form-row">
+            <div class="col-2"> Wie lange</div>
+                <div class="col"><input type="number" name="durA_sec" value="0"><label>Sekunden</label></div>
+                <div class="col"><input type="number" name="durA_min" value="0"><label>Minuten</label></div>
+                <div class="col"><input type="number" name="durA_hour" value="0"><label>Stunden</label></div>
+                <div class="col"><input type="number" name="durA_day" value="0"><label>Tage</label></div>
+            </div>
+            <hr>
+            <div class="form-row">
+                <div class="col-2"> Wie lange</div>
+                <div class="col-6"><input type="number" name="countA" value="0"><label>Anzahl</label></div>
+            </div>
             <hr>
         </div>
-
+</div>
         <div class="hide_Alarm" id="showEmail">
-            Emailtext:<input type="text">
+            Emailtext:<input type="text" name="emailT_A">
             <p></p>
-            <p>Addressaten:<input type="email">
-                <button>Add</button>
+            <p>Addressat:<input type="email" name="emailA_A">
             </p>
         </div>
         <div class="hide_Alarm" id="showSound">
-            Sounddatei:<input type="file"></div>
+            Sounddatei:<input type="file" name="sound_A"></div>
         <div class="hide_Alarm" id="showDisplay">
-            Angezeigte Nachricht:<input type="text"></div>
-</div>
+            Angezeigte Nachricht:<input type="text" name="display_A"></div>
 
 <script>
 $(document).ready(function(){
@@ -155,11 +170,11 @@ $(document).ready(function(){
                value="RRule_Yes">Ja</label>
 </div>
 <div class="hide_RRule" id="showRRule_Yes">
-    <p>Wiederholt sich jede(n/s) <input type="number"> <select name="dropdown">
-        <option value="Minute">Minute</option>
-        <option value="Stunde">Stunde</option>
-        <option selected value="Tag">Tag</option>
-        <option value="Woche">Woche</option>
+    <p>Wiederholt sich jede(n/s) <input type="number" name="countEvery_RR"> <select name="dropdown">
+        <option value="Minute" name="minEvery_RR">Minute</option>
+        <option value="Stunde" name="hourEvery_RR">Stunde</option>
+        <option selected value="Tag" name="dayEvery_RR">Tag</option>
+        <option value="Woche" name="weekEvery_RR">Woche</option>
 
 
     </select></p>
@@ -184,10 +199,9 @@ $(document).ready(function(){
     <p>Nach:<input type="number">Wiederholungen zu ende</p>
 </div>
 
-<h6>Gäste / Teilnehmer</h6>
-Email: <input type="text">
-<button>Add</button>
-# sucht erst ob der User bereits existiert#
+<h6>Teilnehmer</h6>
+Email: <input type="email" name="contact">
+
 <script>
 $(document).ready(function(){
     $("input.s_loc").click(function(){
@@ -215,10 +229,9 @@ $(document).ready(function(){
 </p></div>
 
 <h6>Ressourcen</h6>
-<input type="text">
-<button>Add</button>
+<input type="text" name="resources">
 <h6>Kategory</h6>
-<input name="category" type="text">
+<input type="text" name="category">
 <p></p>
 <p><input type="submit" value="Event erstellen"></p>
 </form>

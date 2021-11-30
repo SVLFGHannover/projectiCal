@@ -1,10 +1,13 @@
+import datetime
+
 from flask import Flask, render_template, flash, redirect, url_for, request, session
 from flask_UI import app, db
 from flask_mysqldb import MySQL
 import MySQLdb.cursors
 from coop.User import User
 from coop.VCalendar import VCalendar
-from coop.VEvent import VEvent, insertCategory
+from coop.VEvent import VEvent, insertCategory, insertResources, insertContact
+from coop.VAlarm import VAlarm
 
 
 @app.route('/pythonlogin/', methods=['GET', 'POST'])
@@ -49,7 +52,7 @@ def home():
                 events_T = cursor.fetchall()
                 for k in list(events_T):
                     events.append(k)
-        return render_template("home.html", loggedin=True, msg="", events = events)
+        return render_template("home.html", loggedin=True, msg="", events=events)
     return render_template("home.html", msg="", loggedin=False)
 
 
@@ -69,40 +72,115 @@ def createEvent():
             cursor.execute('SELECT ID FROM vcalendar WHERE name = %s AND userID = %s', (calendarname, session["ID"],))
             calendarCatch = cursor.fetchone()
             calendarID = calendarCatch["ID"]
-            start_date, start_time, end_date, end_time, category = "", "", "", "", ""
-            lat, lon, city, street = "", "", "", ""
+            start_date, start_time, end_date, end_time, category, dtstart = "", "", "", "", "", ""
             try:
                 start_date = request.form["start_date"]
                 start_time = request.form["start_time"]
                 dtstart = start_date + " " + start_time
 
+                emailT_A = request.form["emailT_A"]
+                emailA_A = request.form["emailA_A"]
+
+                sound_A = request.form["sound_A"]
+
+                display_A = request.form["display_A"]
+            except:
+                print("")
+            event = VEvent(name_E, beschreibung_E, dtstart, calendarID)
+
+            if request.form["emailT_A"]:
+                valarm = VAlarm("EMAIL")
+                valarm.trigger = "-P" + str(request.form["whenA_day"]) + "DT" + str(request.form["whenA_hour"]) + "T" + str(request.form["whenA_min"]) + "M" + str(request.form["whenA_sec"]) + "S"
+                valarm.duration = "P" + str(request.form["durA_day"]) + "DT" + str(request.form["durA_hour"]) + "T" + str(request.form["durA_min"]) + "M" + str(request.form["durA_sec"]) + "S"
+                valarm.repeat = request.form["countA"]
+                valarm.summary = request.form["emailT_A"]
+                cursor.execute('SELECT ID FROM user WHERE email = %s',
+                               (request.form["emailA_A"],))
+                attendeeCatch = cursor.fetchone()
+                if attendeeCatch:
+                    valarm.attendeeID = attendeeCatch["ID"]
+                else:
+                    attendee = User("", request.form["emailA_A"])
+                    cursor.execute(attendee.insertUser())
+                    db.connection.commit()
+                    valarm.attendeeID = "(SELECT ID FROM user ORDER BY ID DESC LIMIT 1)"
+                sql_alarm = valarm.insertAlarm()
+                cursor.execute(sql_alarm)
+                db.connection.commit()
+                event.dic_ID["valarmID"] = "(SELECT ID FROM valarm ORDER BY ID DESC LIMIT 1)"
+            elif request.form["sound_A"]:
+                valarm = VAlarm("AUDIO")
+                valarm.trigger = "-P" + str(request.form["whenA_day"]) + "DT" + str(
+                    request.form["whenA_hour"]) + "T" + str(request.form["whenA_min"]) + "M" + str(
+                    request.form["whenA_sec"]) + "S"
+                valarm.duration = "P" + str(request.form["durA_day"]) + "DT" + str(
+                    request.form["durA_hour"]) + "T" + str(request.form["durA_min"]) + "M" + str(
+                    request.form["durA_sec"]) + "S"
+                valarm.repeat = request.form["countA"]
+                """cursor.execute(f"INSERT INTO attach ('attachment') VALUES ( NULL )") # weiß nicht weiter
+                db.connection.commit()
+                valarm.attach = "(SELECT ID FROM attach ORDER BY ID DESC LIMIT 1)"""
+                sql_alarm = valarm.insertAlarm()
+                print(sql_alarm)
+                cursor.execute(sql_alarm)
+                db.connection.commit()
+                event.dic_ID["valarmID"] = "(SELECT ID FROM valarm ORDER BY ID DESC LIMIT 1)"
+            elif request.form["display_A"]:
+                valarm = VAlarm("DISPLAY")
+                valarm.trigger = "-P" + str(request.form["whenA_day"]) + "DT" + str(
+                    request.form["whenA_hour"]) + "T" + str(request.form["whenA_min"]) + "M" + str(
+                    request.form["whenA_sec"]) + "S"
+                valarm.duration = "P" + str(request.form["durA_day"]) + "DT" + str(
+                    request.form["durA_hour"]) + "T" + str(request.form["durA_min"]) + "M" + str(
+                    request.form["durA_sec"]) + "S"
+                valarm.repeat = request.form["countA"]
+                valarm.description = request.form["display_A"]
+                sql_alarm = valarm.insertAlarm()
+                cursor.execute(sql_alarm)
+                db.connection.commit()
+                event.dic_ID["valarmID"] = "(SELECT ID FROM valarm ORDER BY ID DESC LIMIT 1)"
+
+            if request.form["end_date"]:
                 end_date = request.form["end_date"]
                 end_time = request.form["end_time"]
                 dtend = end_date + " " + end_time
-
+                event.dtend = dtend
+            else:
                 dur_sec = request.form["dur_sec"]
                 dur_min = request.form["dur_min"]
                 dur_hour = request.form["dur_hour"]
                 dur_day = request.form["dur_day"]
+                dur_week = request.form["dur_week"]
+                event.duration = "P" + str(dur_week) + "W" + str(dur_day) + "DT" + str(dur_hour) + "T" + str(
+                    dur_min) + "M" + str(dur_sec) + "S"
 
+            if request.form["category"]:
                 category = request.form["category"]
-                lat = request.form["lat"]
-                lon = request.form["lon"]
-                street = request.form["street"]
-                city = request.form["city"]
-            except:
-                print("")
-            event = VEvent(name_E, beschreibung_E, dtstart, dtend, calendarID)
-            if category:
                 sql_category = insertCategory(category)
                 cursor.execute(sql_category)
                 db.connection.commit()
                 event.dic_ID["categoriesID"] = "(SELECT ID FROM categories ORDER BY ID DESC LIMIT 1)"
-            if lat and lon:
+            if request.form["lat"] and request.form["lon"]:
+                lat = request.form["lat"]
+                lon = request.form["lon"]
                 event.geolat = lat
                 event.geolng = lon
-            elif city:
+            elif request.form["city"]:
+                street = request.form["street"]
+                city = request.form["city"]
                 event.location = city + ", " + street
+            if request.form["resources"]:
+                resources = request.form["resources"]
+                sql_resources = insertResources(resources)
+                cursor.execute(sql_resources)
+                db.connection.commit()
+                event.dic_ID["resourcesID"] = "(SELECT ID FROM resources ORDER BY ID DESC LIMIT 1)"
+            if request.form["contact"]:
+                contact = request.form["contact"]
+                sql_contact = insertContact(contact)
+                cursor.execute(sql_contact)
+                db.connection.commit()
+                event.dic_ID["contactID"] = "(SELECT ID FROM contact ORDER BY ID DESC LIMIT 1)"
             cursor.execute(event.insertEvent())
             print(event.insertEvent())
             db.connection.commit()
@@ -178,6 +256,7 @@ def register():
             msg = 'Du wurdest erfolgreich registriert!'
     # Show registration form with message (if any)
     return render_template('register.html', msg=msg)
+
 
 @app.route('/createICS', methods=['GET', 'POST'])
 def createICS():

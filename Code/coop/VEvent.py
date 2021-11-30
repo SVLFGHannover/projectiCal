@@ -2,14 +2,14 @@ import datetime
 
 
 class VEvent:
-    def __init__(self, summary, description, dtstart, dtend, vcalendarID):
+    def __init__(self, summary, description, dtstart, vcalendarID):
         self.description = description
         self.summary = summary                                                      # Title of Event
         self.class_ = ""                                                       # Access classification ( public / private )
         self.priority = 0                                                      # 1 (lowest) - 9 (highest), 0 = undefined
         self.dtstamp = datetime.datetime.now()                                 # Time of Creation
         self.dtstart = dtstart                                                 # Starting time of event
-        self.dtend = dtend                                                     # Ending time of event
+        self.dtend = ""                                                     # Ending time of event
         self.duration = ""                                                     # Alternative to dtend, duration of event
         self.created = datetime.datetime.now()                           # Same as dtstamp
         self.lastmod = ""                                                # Date of last modification of iCalendar-Object
@@ -52,21 +52,11 @@ def insertCategory(newCategory):
     return sql_insertContact
 
 
-def insertContact(db, newContact):
-    mycursor = db.cursor()
+def insertContact(newContact):
     sql_insertContact = f"INSERT INTO CONTACT(CONTACT) VALUES ('{newContact}')"
-    try:
-        mycursor.execute(sql_insertContact)
-        db.commit()
-    except:
-        db.rollback()
+    return sql_insertContact
 
 
-def insertResource(db, newResource):
-    mycursor = db.cursor()
-    sql_insertContact = f"INSERT INTO RESOURCES(RESOURCE) VALUES ('{newResource}')"
-    try:
-        mycursor.execute(sql_insertContact)
-        db.commit()
-    except:
-        db.rollback()
+def insertResources(newResource):
+    sql_insertResources = f"INSERT INTO RESOURCES(RESOURCE) VALUES ('{newResource}')"
+    return sql_insertResources
