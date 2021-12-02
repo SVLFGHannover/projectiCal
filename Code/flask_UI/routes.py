@@ -1,9 +1,13 @@
+import datetime
+
 from flask import Flask, render_template, flash, redirect, url_for, request, session
 from flask_UI import app, db
 from flask_mysqldb import MySQL
 import MySQLdb.cursors
 from coop.User import User
 from coop.VCalendar import VCalendar
+from coop.VEvent import VEvent, insertCategory, insertResources, insertContact
+from coop.VAlarm import VAlarm
 
 
 @app.route('/pythonlogin/', methods=['GET', 'POST'])
@@ -21,7 +25,7 @@ def login():
             session['name'] = account['name']
             return redirect(url_for('home'))
         else:
-            msg = 'Incorrect username/password!'
+            msg = 'Falscher Name oder falsche Email!'
     return render_template('home.html', msg=msg)
 
 
@@ -36,14 +40,153 @@ def about():
 @app.route("/home")
 def home():
     if 'loggedin' in session:
-        return render_template("home.html", loggedin=True, msg="")
+        events = []
+        cursor = db.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('SELECT ID FROM vcalendar WHERE userID = %s', (session["ID"],))
+        calendars_T = cursor.fetchall()
+        calendars = list(calendars_T)
+
+        for e in calendars:
+            for x, y in e.items():
+                cursor.execute(f'SELECT * FROM vevent WHERE vcalendarID = {int(y)}')
+                events_T = cursor.fetchall()
+                for k in list(events_T):
+                    events.append(k)
+        return render_template("home.html", loggedin=True, msg="", events=events)
     return render_template("home.html", msg="", loggedin=False)
 
 
-@app.route("/createEvent")
+@app.route("/createEvent", methods=['GET', 'POST'])
 def createEvent():
     if 'loggedin' in session:
-        return render_template("createEvent.html", title='Account', loggedin=True)
+        # Dropdown Calendars
+        cursor = db.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('SELECT name FROM vcalendar WHERE userID = %s', (session["ID"],))
+        calendars = cursor.fetchall()
+        calendars_L = list(calendars)
+        if request.method == 'POST':
+            name_E = request.form["name_E"]
+            beschreibung_E = request.form["beschreibung_E"]
+            calendarname = request.form["test"]
+            cursor = db.connection.cursor(MySQLdb.cursors.DictCursor)
+            cursor.execute('SELECT ID FROM vcalendar WHERE name = %s AND userID = %s', (calendarname, session["ID"],))
+            calendarCatch = cursor.fetchone()
+            calendarID = calendarCatch["ID"]
+            start_date, start_time, end_date, end_time, category, dtstart = "", "", "", "", "", ""
+            try:
+                start_date = request.form["start_date"]
+                start_time = request.form["start_time"]
+                dtstart = start_date + " " + start_time
+
+                emailT_A = request.form["emailT_A"]
+                emailA_A = request.form["emailA_A"]
+
+                sound_A = request.form["sound_A"]
+
+                display_A = request.form["display_A"]
+            except:
+                print("")
+            event = VEvent(name_E, beschreibung_E, dtstart, calendarID)
+
+            if request.form["emailT_A"]:
+                valarm = VAlarm("EMAIL")
+                valarm.trigger = "-P" + str(request.form["whenA_day"]) + "DT" + str(request.form["whenA_hour"]) + "T" + str(request.form["whenA_min"]) + "M" + str(request.form["whenA_sec"]) + "S"
+                valarm.duration = "P" + str(request.form["durA_day"]) + "DT" + str(request.form["durA_hour"]) + "T" + str(request.form["durA_min"]) + "M" + str(request.form["durA_sec"]) + "S"
+                valarm.repeat = request.form["countA"]
+                valarm.summary = request.form["emailT_A"]
+                cursor.execute('SELECT ID FROM user WHERE email = %s',
+                               (request.form["emailA_A"],))
+                attendeeCatch = cursor.fetchone()
+                if attendeeCatch:
+                    valarm.attendeeID = attendeeCatch["ID"]
+                else:
+                    attendee = User("", request.form["emailA_A"])
+                    cursor.execute(attendee.insertUser())
+                    db.connection.commit()
+                    valarm.attendeeID = "(SELECT ID FROM user ORDER BY ID DESC LIMIT 1)"
+                sql_alarm = valarm.insertAlarm()
+                cursor.execute(sql_alarm)
+                db.connection.commit()
+                event.dic_ID["valarmID"] = "(SELECT ID FROM valarm ORDER BY ID DESC LIMIT 1)"
+            elif request.form["sound_A"]:
+                valarm = VAlarm("AUDIO")
+                valarm.trigger = "-P" + str(request.form["whenA_day"]) + "DT" + str(
+                    request.form["whenA_hour"]) + "T" + str(request.form["whenA_min"]) + "M" + str(
+                    request.form["whenA_sec"]) + "S"
+                valarm.duration = "P" + str(request.form["durA_day"]) + "DT" + str(
+                    request.form["durA_hour"]) + "T" + str(request.form["durA_min"]) + "M" + str(
+                    request.form["durA_sec"]) + "S"
+                valarm.repeat = request.form["countA"]
+                """cursor.execute(f"INSERT INTO attach ('attachment') VALUES ( NULL )") # weiß nicht weiter
+                db.connection.commit()
+                valarm.attach = "(SELECT ID FROM attach ORDER BY ID DESC LIMIT 1)"""
+                sql_alarm = valarm.insertAlarm()
+                print(sql_alarm)
+                cursor.execute(sql_alarm)
+                db.connection.commit()
+                event.dic_ID["valarmID"] = "(SELECT ID FROM valarm ORDER BY ID DESC LIMIT 1)"
+            elif request.form["display_A"]:
+                valarm = VAlarm("DISPLAY")
+                valarm.trigger = "-P" + str(request.form["whenA_day"]) + "DT" + str(
+                    request.form["whenA_hour"]) + "T" + str(request.form["whenA_min"]) + "M" + str(
+                    request.form["whenA_sec"]) + "S"
+                valarm.duration = "P" + str(request.form["durA_day"]) + "DT" + str(
+                    request.form["durA_hour"]) + "T" + str(request.form["durA_min"]) + "M" + str(
+                    request.form["durA_sec"]) + "S"
+                valarm.repeat = request.form["countA"]
+                valarm.description = request.form["display_A"]
+                sql_alarm = valarm.insertAlarm()
+                cursor.execute(sql_alarm)
+                db.connection.commit()
+                event.dic_ID["valarmID"] = "(SELECT ID FROM valarm ORDER BY ID DESC LIMIT 1)"
+
+            if request.form["end_date"]:
+                end_date = request.form["end_date"]
+                end_time = request.form["end_time"]
+                dtend = end_date + " " + end_time
+                event.dtend = dtend
+            else:
+                dur_sec = request.form["dur_sec"]
+                dur_min = request.form["dur_min"]
+                dur_hour = request.form["dur_hour"]
+                dur_day = request.form["dur_day"]
+                dur_week = request.form["dur_week"]
+                event.duration = "P" + str(dur_week) + "W" + str(dur_day) + "DT" + str(dur_hour) + "T" + str(
+                    dur_min) + "M" + str(dur_sec) + "S"
+
+            if request.form["category"]:
+                category = request.form["category"]
+                sql_category = insertCategory(category)
+                cursor.execute(sql_category)
+                db.connection.commit()
+                event.dic_ID["categoriesID"] = "(SELECT ID FROM categories ORDER BY ID DESC LIMIT 1)"
+            if request.form["lat"] and request.form["lon"]:
+                lat = request.form["lat"]
+                lon = request.form["lon"]
+                event.geolat = lat
+                event.geolng = lon
+            elif request.form["city"]:
+                street = request.form["street"]
+                city = request.form["city"]
+                event.location = city + ", " + street
+            if request.form["resources"]:
+                resources = request.form["resources"]
+                sql_resources = insertResources(resources)
+                cursor.execute(sql_resources)
+                db.connection.commit()
+                event.dic_ID["resourcesID"] = "(SELECT ID FROM resources ORDER BY ID DESC LIMIT 1)"
+            if request.form["contact"]:
+                contact = request.form["contact"]
+                sql_contact = insertContact(contact)
+                cursor.execute(sql_contact)
+                db.connection.commit()
+                event.dic_ID["contactID"] = "(SELECT ID FROM contact ORDER BY ID DESC LIMIT 1)"
+            cursor.execute(event.insertEvent())
+            print(event.insertEvent())
+            db.connection.commit()
+            return render_template("createEvent.html", title='Account', loggedin=True, calendars=calendars_L,
+                                   msg="Event wurde erstellt")
+        return render_template("createEvent.html", title='Account', loggedin=True, calendars=calendars_L)
     else:
         redirect(url_for('home'))
 
@@ -62,11 +205,11 @@ def createCalendar():
             cursor.execute('SELECT * FROM vcalendar WHERE name = %s', (name,))
             calender = cursor.fetchone()
             if calender:
-                msg = 'Calendar already exists!'
+                msg = 'Dieser Kalender existiert bereits!'
             else:
                 vcalendar = VCalendar(session["ID"], name, beschreibung)
                 cursor.execute(vcalendar.insertCalendar())
-                msg="Kalender wurde erstellt."
+                msg = "Kalender wurde erstellt."
                 db.connection.commit()
             return render_template("createCalendar.html", title='create Calendar', loggedin=True, msg=msg)
         else:
@@ -96,11 +239,11 @@ def register():
         email = request.form['email']
         # Check if account exists using MySQL
         cursor = db.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute('SELECT * FROM user WHERE name = %s', (name,))
+        cursor.execute('SELECT * FROM user WHERE email = %s', (email,))
         account = cursor.fetchone()
         # If account exists show error and validation checks
         if account:
-            msg = 'Account already exists!'
+            msg = 'Diese Email wird bereits verwendet.'
         else:
             # Account doesnt exists and the form data is valid, now insert new account into accounts table
             user = User(name, email)
@@ -110,9 +253,19 @@ def register():
                                  name + "s Startkalender")
             cursor.execute(calendar.insertCalendar())
             db.connection.commit()
-            msg = 'You have successfully registered!'
-    elif request.method == 'POST':
-        # Form is empty... (no POST data)
-        msg = 'Please fill out the form!'
+            msg = 'Du wurdest erfolgreich registriert!'
     # Show registration form with message (if any)
     return render_template('register.html', msg=msg)
+
+
+@app.route('/createICS', methods=['GET', 'POST'])
+def createICS():
+    if session["loggedin"]:
+        events = []
+        cursor = db.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('SELECT * FROM vcalendar WHERE userID = %s', (session["ID"],))
+        calendars_T = cursor.fetchall()
+        calendars = list(calendars_T)
+        return render_template("createICS.html", loggedin=True, msg="", calendars=calendars)
+    else:
+        redirect(url_for('home'))

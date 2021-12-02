@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container">
+  <h1>Kalender</h1>
+  <hr>
+<div class="row">
+	  {% for x in calendars %}
+  <div class="albumcard col-4">
+<div class="card mb-3 ">
+  <h3 class="card-header">{{x["name"]}}
+  </h3>
+  <div class="card-body ">
+    <h5 class="card-title"></h5>
+    <h6 class="card-subtitle text-muted">Kalender {{x["ID"]}}</h6>
+    <p class="card-text">{{x["description"]}}</div>
+  <button class="btn btn-primary col-6 test">ICS-Datei erstellen</button>
+</div></div>
+	  {% endfor %}
+    </div></div>
+{% endblock %}

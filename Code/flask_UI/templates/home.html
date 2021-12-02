@@ -3,13 +3,87 @@
 
 {% block content %}
 {% if loggedin %}
-<h1>Logged In</h1>
+  <div class="b-example-divider"></div>
+
+  <div class="container px-4 py-5" id="hanging-icons">
+    <h2 class="pb-2 border-bottom">iCalendar</h2>
+    <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
+      <div class="col d-flex align-items-start">
+        <div class="icon-square bg-light text-dark flex-shrink-0 me-3">
+          <svg class="bi" width="1em" height="1em"><use xlink:href="#toggles2"/></svg>
+        </div>
+        <div>
+          <h2>Termin anlegen</h2>
+          <p>Hier kommt etwas hin.</p>
+          <a href="{{url_for('createEvent')}}" class="btn btn-primary">
+            Hier klicken!
+          </a>
+        </div>
+      </div>
+      <div class="col d-flex align-items-start">
+        <div class="icon-square bg-light text-dark flex-shrink-0 me-3">
+          <svg class="bi" width="1em" height="1em"><use xlink:href="#cpu-fill"/></svg>
+        </div>
+        <div>
+          <h2>Kalender anlegen</h2>
+          <p>Hier kommt auch etwas hin.</p>
+          <a href="{{url_for('createCalendar')}}" class="btn btn-primary">
+            Hier klicken!
+          </a>
+        </div>
+      </div>
+      <div class="col d-flex align-items-start">
+        <div class="icon-square bg-light text-dark flex-shrink-0 me-3">
+          <svg class="bi" width="1em" height="1em"><use xlink:href="#tools"/></svg>
+        </div>
+        <div>
+          <h2>ICS-Kalender erstellen</h2>
+          <p>Ich bin kein Texter.</p>
+          <a href="{{url_for('createICS')}}" class="btn btn-primary">
+            Hier klicken!
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div class="container">
+  <h1>Events</h1>
+  <hr>
+<div class="row">
+	  {% for x in events %}
+  <div class="albumcard col-4">
+<div class="card mb-3 ">
+  <h3 class="card-header">{{x["summary"]}}
+  {% if x["valarmID"] %}
+  <span class="badge badge-danger">Alarm</span>
+  {% endif %}
+    {% if x["rRuleID"] %}
+  <span class="badge badge-info">Wiederholend</span>
+  {% endif %}
+  </h3>
+  <div class="card-body">
+    <h5 class="card-title"></h5>
+    <h6 class="card-subtitle text-muted">Kalender: {{x["vcalendarID"]}}</h6>
+    <p class="card-text">{{x["description"]}}</div>
+  <ul class="list-group list-group-flush">
+    <li class="list-group-item">Kategorie: {{x["categoriesID"]}}</li>
+    <li class="list-group-item">benötigte Gegenstände: {{x["resourcesID"]}}</li>
+    <li class="list-group-item">Gäste: {{x["attendeeID"]}}</li>
+    <li class="list-group-item">Ort: {{x["location"]}}</li>
+  </ul>
+  <div class="card-footer text-muted">
+    Von: {{x["dtstart"]}} Bis: {{x["dtend"]}}
+  </div>
+</div></div>
+	  {% endfor %}
+    </div></div>
 {% else %}
   <div class="container col-xl-10 col-xxl-8 px-4 py-5">
     <div class="row align-items-center g-lg-5 py-5">
       <div class="col-lg-7 text-center text-lg-start">
         <h1 class="display-4 fw-bold lh-1 mb-3">iCalendar</h1>
-        <p class="col-lg-10 fs-4">Below is an example form built entirely with Bootstrap’s form controls. Each required form group has a validation state that can be triggered by attempting to submit the form without completing it.</p>
+        <p class="col-lg-10 fs-4">Hier kommt ein Text hin</p>
       </div>
       			<form action="{{ url_for('login') }}" method="post">
 				<label for="email">
