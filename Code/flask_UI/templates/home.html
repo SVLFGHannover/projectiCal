@@ -61,6 +61,11 @@
     {% if x["rRuleID"] %}
   <span class="badge badge-info">Wiederholend</span>
   {% endif %}
+<form action="{{ url_for('createICSEvent') }}" method="post">
+      <input type="hidden" name="eventID" value="{{ x['ID'] }}">
+            <input type="submit" value="ics-Event erstellen"/>
+        </form>
+
   </h3>
   <div class="card-body">
     <h5 class="card-title"></h5>

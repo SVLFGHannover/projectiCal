@@ -90,9 +90,9 @@ $(document).ready(function(){
         $("div.hide_Alarm").hide();
 
         if ($(this).val() == "KeinAlarm") {
-  $("#showRest").hide();
+  $("#showRestAlarm").hide();
 }
-else {$("#showRest").show();}
+else {$("#showRestAlarm").show();}
         $("#show"+demovalue).show();
 
     });
@@ -113,7 +113,7 @@ else {$("#showRest").show();}
                 <input class="s_alarm" name="alarmRadio" type="radio" value="Display">Display</label>
                 </div>
 
-        <div class="hide_Alarm" id="showRest">
+        <div class="hide_Alarm" id="showRestAlarm">
             <div class="form-row">
             <div class="col-2">Wann</div>
                 <div class="col"><input type="number" name="whenA_sec" value="0"><label>Sekunden</label></div>
@@ -148,56 +148,61 @@ else {$("#showRest").show();}
         <div class="hide_Alarm" id="showDisplay">
             Angezeigte Nachricht:<input type="text" name="display_A"></div>
 
+<div>
+<h6>Wiederholung</h6>
+            <label>
+                <input checked class="s_rrule" name="rruleRadio" type="radio" value="KeinRRule">Keine</label>
+            <label>
+                <input class="s_rrule" name="rruleRadio" type="radio" value="hourly">Stündlich</label>
+            <label>
+                <input class="s_rrule" name="rruleRadio" type="radio" value="daily">Täglich</label>
+            <label>
+                <input class="s_rrule" name="rruleRadio" type="radio" value="weekly">Wöchentlich</label>
+    <label>
+                <input class="s_rrule" name="rruleRadio" type="radio" value="monthly">Monatlich</label>
+    <label>
+                <input class="s_rrule" name="rruleRadio" type="radio" value="yearly">Jährlich</label>
+                </div>
+
+        <div class="hide_RRule" id="showhourly">jede <input name="rr_hourly" type="number"> Stunde</div>
+        <div class="hide_RRule" id="showdaily">jeden <input name="rr_daily" type="number"> Tag</div>
+        <div class="hide_RRule" id="showweekly">
+            jede <input name="rr_weekly" type="number"> Woche
+        <p>
+            <label>Montag</label><input type="checkbox" name="rr_weekdays" VALUE="MO"> |
+            <label>Dienstag</label><input type="checkbox" name="rr_weekdays" VALUE="TU"> |
+            <label>Mittwoch</label><input type="checkbox" name="rr_weekdays" VALUE="WE"> |
+            <label>Donnerstag</label><input type="checkbox" name="rr_weekdays" VALUE="TH"> |
+            <label>Freitag</label><input type="checkbox" name="rr_weekdays" VALUE="FR"> |
+            <label>Samstag</label><input type="checkbox" name="rr_weekdays" VALUE="SA"> |
+            <label>Sonntag</label><input type="checkbox" name="rr_weekdays" VALUE="SO"> |
+        </p>
+
+        </div>
+        <div class="hide_RRule" id="showmonthly">mo</div>
+        <div class="hide_RRule" id="showyearly">year</div>
+        <div class="hide_RRule" id="showRestRRule">
+            <p>Endet nach <input name="rr_count" type="number"> malen oder am
+                    <input name="rr_until" type="date">
+                     oder <i>nie</i></p>
+            </p>
+        </div>
 <script>
 $(document).ready(function(){
     $("input.s_rrule").click(function(){
     	var demovalue = $(this).val();
         $("div.hide_RRule").hide();
+
+        if ($(this).val() == "KeinRRule") {
+  $("#showRestRRule").hide();
+}
+else {$("#showRestRRule").show();}
         $("#show"+demovalue).show();
+
     });
 });
 
-
-</script>
-<h6>Wiederholend</h6>
-
-<div>
-    <label>
-        <input checked class="s_rrule" name="colorRadio"
-               type="radio" value="RRule_No">Nein</label>
-    <label>
-        <input class="s_rrule" name="colorRadio" type="radio"
-               value="RRule_Yes">Ja</label>
-</div>
-<div class="hide_RRule" id="showRRule_Yes">
-    <p>Wiederholt sich jede(n/s) <input type="number" name="countEvery_RR"> <select name="dropdown">
-        <option value="Minute" name="minEvery_RR">Minute</option>
-        <option value="Stunde" name="hourEvery_RR">Stunde</option>
-        <option selected value="Tag" name="dayEvery_RR">Tag</option>
-        <option value="Woche" name="weekEvery_RR">Woche</option>
-
-
-    </select></p>
-    <p>Wiederholt sich an:
-        <input name="Montag" type="checkbox"> Montag
-        <input name="Dienstag" type="checkbox"> Dienstag
-        <input name="Mittwoch" type="checkbox"> Mittwoch
-        <input name="Donnerstag" type="checkbox"> Donnerstag
-        <input name="Freitag" type="checkbox"> Freitag
-        <input name="Samstag" type="checkbox"> Samstag
-        <input name="Sonntag" type="checkbox"> Sonntag
-    </p>
-    <div>
-        <label>
-            <input name="endingRadio" type="radio"
-            >Endet am</label>
-        <label>
-            <input name="endingRadio" type="radio"
-            >Wiederholungen</label>
-    </div>
-    <p>Endet am:<input type="date"><input type="time"></p>
-    <p>Nach:<input type="number">Wiederholungen zu ende</p>
-</div>
+        </script>
 
 <h6>Teilnehmer</h6>
 Email: <input type="email" name="contact">

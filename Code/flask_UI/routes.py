@@ -8,6 +8,9 @@ from coop.User import User
 from coop.VCalendar import VCalendar
 from coop.VEvent import VEvent, insertCategory, insertResources, insertContact
 from coop.VAlarm import VAlarm
+from coop.RRule import RRule
+from ics import Calendar, Event
+
 
 
 @app.route('/pythonlogin/', methods=['GET', 'POST'])
@@ -77,13 +80,6 @@ def createEvent():
                 start_date = request.form["start_date"]
                 start_time = request.form["start_time"]
                 dtstart = start_date + " " + start_time
-
-                emailT_A = request.form["emailT_A"]
-                emailA_A = request.form["emailA_A"]
-
-                sound_A = request.form["sound_A"]
-
-                display_A = request.form["display_A"]
             except:
                 print("")
             event = VEvent(name_E, beschreibung_E, dtstart, calendarID)
@@ -153,6 +149,38 @@ def createEvent():
                 dur_week = request.form["dur_week"]
                 event.duration = "P" + str(dur_week) + "W" + str(dur_day) + "DT" + str(dur_hour) + "T" + str(
                     dur_min) + "M" + str(dur_sec) + "S"
+
+            def rruleRest():
+                if request.form["rr_count"]:
+                    rrule.count = request.form["rr_count"]
+                elif request.form["rr_until"]:
+                    rrule.until = request.form["rr_until"]
+                sql_rrule = rrule.insertRRule()
+                cursor.execute(sql_rrule)
+                db.connection.commit()
+                event.dic_ID["rruleID"] = "(SELECT ID FROM rrule ORDER BY ID DESC LIMIT 1)"
+
+            if request.form["rr_hourly"]:
+                rrule = RRule()
+                rrule.freq = "HOURLY"
+                rrule.interval = request.form["rr_hourly"]
+                rruleRest()
+            elif request.form["rr_daily"]:
+                rrule = RRule()
+                rrule.freq = "DAILY"
+                rrule.interval = request.form["rr_daily"]
+                rruleRest()
+
+            elif request.form["rr_weekly"]:
+                print("weekly")
+                rrule = RRule()
+                rrule.freq = "WEEKLY"
+                rrule.interval = request.form["rr_weekly"]
+
+                selected_weekdays = request.form.getlist("rr_weekdays")
+                rrule.byday = ', '.join(selected_weekdays)
+                print(rrule.byday)
+                rruleRest()
 
             if request.form["category"]:
                 category = request.form["category"]
@@ -267,5 +295,40 @@ def createICS():
         calendars_T = cursor.fetchall()
         calendars = list(calendars_T)
         return render_template("createICS.html", loggedin=True, msg="", calendars=calendars)
+    else:
+        redirect(url_for('home'))
+
+
+@app.route('/createICSEvent', methods=['GET', 'POST'])
+def createICSEvent():
+    if request.method == 'POST' and 'eventID' in request.form:
+        test = ""
+        id = request.form["eventID"]
+        cursor = db.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute(f'SELECT * FROM vevent WHERE ID = {id}')
+        event = cursor.fetchone()
+        print(event)
+        cursor.execute(f'SELECT * FROM vcalendar WHERE ID = {event["vcalendarID"]}')
+        calendar = cursor.fetchone()
+        print(calendar)
+        test = str(event) + "<p></p><p></p>" + str(calendar)
+        c = Calendar()
+        e = Event()
+
+        e.name = event["summary"]
+        e.begin = event["dtstart"]
+        print(event["duration"])
+        e.end = event["dtend"]
+        c.events.add(e)
+        with open(f'flask_UI/ics_files/{event["summary"]}.ics', 'w') as f:
+            f.write(str(c))
+        return render_template("info.html", file=f'{event["summary"]}.ics', loggedin=True)
+    else:
+        redirect(url_for('home'))
+
+@app.route('/info', methods=['GET', 'POST'])
+def info():
+    if session["loggedin"]:
+        return render_template("info.html", file="", loggedin=True)
     else:
         redirect(url_for('home'))
