@@ -15,8 +15,8 @@ def set_conn(host, user, pw, db):
         mydb._host = host
         mydb.database = db
         return 'Database connected successfull!'
-    except:
-        return 'Database not connected!'
+    except mysql.connector.Error as err:
+        return 'Database not connected!{}'.format(err)
 
 
 def db_request(req):
@@ -24,3 +24,8 @@ def db_request(req):
     mycursor.execute(req)
     return mycursor.fetchall()
 
+
+def db_insert(s, w):
+    mycursor = mydb.cursor()
+    mycursor.execute(s, w)
+    mydb.commit()

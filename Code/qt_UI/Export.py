@@ -2,6 +2,31 @@ from DB import db_request
 from PyQt6.QtWidgets import QFileDialog
 from icalendar import Calendar, Event, Alarm
 from datetime import timedelta
+from Insert import *
+
+
+def request_user_id(name):
+    myresult_user = db_request("SELECT id FROM User Where name = '{0}'".format(name))
+    if not myresult_user:
+        return None
+    else:
+        return myresult_user[0][0]
+
+
+def request_calendar_id(name):
+    myresult_user = db_request("SELECT ID FROM VCalendar WHERE name = '{0}'".format(name))
+    if not myresult_user:
+        return None
+    else:
+        return myresult_user[0][0]
+
+
+def request_rule_id(rule):
+    if rule == '':
+        return None
+    else:
+        myresult_rule = db_request("SELECT ID FROM RRule WHERE freq = '{0}'".format(rule))
+        return myresult_rule[0][0]
 
 
 # Suche nach name
@@ -9,7 +34,6 @@ def request_name(name):
     events = ''
     myresult_events = db_request("SELECT summary, dtstart, dtend, description, rruleID  FROM VEvent WHERE attendeeID = "
                                  "(SELECT ID FROM user WHERE name = '{0}')".format(name))
-    print(myresult_events)
     for cal in myresult_events:
         events += cal[0] + ' - ' + cal[1].strftime(format="%d.%m.%y %H:%M") + \
                   ', Duration:' + str(cal[2] - cal[1]) + ', Description: ' + cal[3] + '\n'
@@ -29,7 +53,6 @@ def request_cal(name):
     calendars = ''
     myresult_cal = db_request("SELECT * FROM VCalendar WHERE userID = "
                               "(SELECT ID FROM user WHERE name = '{0}')".format(name))
-    print(myresult_cal)
     for cal in myresult_cal:
         calendars += 'Calender - ' + cal[2] + '\n'
     if myresult_cal:
