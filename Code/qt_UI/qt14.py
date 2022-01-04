@@ -1,5 +1,6 @@
 from PyQt6.QtWidgets import *
 from PyQt6.QtCore import QDateTime
+
 from Export import *
 from Insert import *
 
@@ -26,6 +27,7 @@ class ICal(QWidget):
         tab5 = QWidget()
         tab6 = QWidget()
         tab7 = QWidget()
+        tab8 = QWidget()
 
         tabs = QTabWidget()
         tabs.addTab(tab1, 'Insert')
@@ -35,6 +37,7 @@ class ICal(QWidget):
         insert_tab.addTab(tab3, 'Event')
         insert_tab.addTab(tab4, 'Calendar')
         insert_tab.addTab(tab5, 'User')
+        insert_tab.addTab(tab8, 'Database')
 
         export_tab = QTabWidget()
         export_tab.addTab(tab6, 'Event')
@@ -56,7 +59,7 @@ class ICal(QWidget):
         event_cal_label = QLabel('Calendar')
         event_cal_line = QLineEdit(self)
 
-        event_user_label = QLabel('User (optional)')
+        event_user_label = QLabel('User')
         event_user_line = QLineEdit(self)
 
         stat_label = QLabel('Start')
@@ -108,7 +111,7 @@ class ICal(QWidget):
         cal_user_label = QLabel('User')
         cal_user_line = QLineEdit(self)
 
-        cal_desc_label = QLabel('Description')
+        cal_desc_label = QLabel('Description (optional)')
         cal_desc_line = QLineEdit(self)
 
         cal_btn = QPushButton('Insert', self)
@@ -132,7 +135,7 @@ class ICal(QWidget):
         user_label = QLabel('Name')
         user_line = QLineEdit(self)
 
-        email_label = QLabel('Email')
+        email_label = QLabel('Email (optional)')
         email_line = QLineEdit(self)
 
         user_btn = QPushButton('Insert', self)
@@ -198,6 +201,34 @@ class ICal(QWidget):
         tab7.layout.addWidget(cal_btn_ics)
 
         tab7.setLayout(tab7.layout)
+
+        tab8.layout = QVBoxLayout(self)
+
+        host_label = QLabel('Host', self)
+        host_line = QLineEdit(self)
+        db_user_label = QLabel('User', self)
+        db_user_line = QLineEdit(self)
+        pw_label = QLabel('Password', self)
+        pw_line = QLineEdit(self)
+        db_label = QLabel('Database', self)
+        db_line = QLineEdit(self)
+
+        db_btn = QPushButton('Set Database', self)
+
+        db_box = QTextEdit(self)
+
+        tab8.layout.addWidget(host_label)
+        tab8.layout.addWidget(host_line)
+        tab8.layout.addWidget(db_user_label)
+        tab8.layout.addWidget(db_user_line)
+        tab8.layout.addWidget(pw_label)
+        tab8.layout.addWidget(pw_line)
+        tab8.layout.addWidget(db_label)
+        tab8.layout.addWidget(db_line)
+        tab8.layout.addWidget(db_btn)
+        tab8.layout.addWidget(db_box)
+
+        tab8.setLayout(tab8.layout)
 
         vbox = QVBoxLayout()
         vbox.addWidget(tabs)
