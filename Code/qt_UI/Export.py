@@ -1,7 +1,7 @@
 from DB import db_request
 from PyQt6.QtWidgets import QFileDialog
 from icalendar import Calendar, Event, Alarm
-from datetime import timedelta
+from datetime import timedelta, datetime
 from Insert import *
 
 
@@ -144,3 +144,11 @@ def ics_cal(name):
 def save_dialog(name):
     n = QFileDialog.getSaveFileName(caption=name)
     return n[0]
+
+
+def select_events(data):
+    mess=''
+    events_req = db_request("SELECT summary, dtstart, dtend FROM `VEvent` WHERE dtend < '{0}'".format(data))
+    for ev in events_req:
+        mess += str(ev[0]) +' ' + ev[1].strftime(format="%d.%m.%y %H:%M")+' - ' + ev[2].strftime(format="%d.%m.%y %H:%M") + '\n'
+    return mess

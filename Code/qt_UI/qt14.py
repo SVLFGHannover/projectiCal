@@ -1,6 +1,7 @@
 from PyQt6.QtWidgets import *
 from PyQt6.QtCore import QDateTime
 
+from DB import set_conn
 from Export import *
 from Insert import *
 
@@ -37,7 +38,7 @@ class ICal(QWidget):
         insert_tab.addTab(tab3, 'Event')
         insert_tab.addTab(tab4, 'Calendar')
         insert_tab.addTab(tab5, 'User')
-        insert_tab.addTab(tab8, 'Database')
+        insert_tab.addTab(tab8, 'Delete Events')
 
         export_tab = QTabWidget()
         export_tab.addTab(tab6, 'Event')
@@ -204,29 +205,24 @@ class ICal(QWidget):
 
         tab8.layout = QVBoxLayout(self)
 
-        host_label = QLabel('Host', self)
-        host_line = QLineEdit(self)
-        db_user_label = QLabel('User', self)
-        db_user_line = QLineEdit(self)
-        pw_label = QLabel('Password', self)
-        pw_line = QLineEdit(self)
-        db_label = QLabel('Database', self)
-        db_line = QLineEdit(self)
+        del_label = QLabel('Date')
+        date_del = QDateTimeEdit(QDateTime.currentDateTime().toPyDateTime())
+        date_del.setDisplayFormat('yyyy-MM-dd')
 
-        db_btn = QPushButton('Set Database', self)
+        data_btn = QPushButton('View Events', self)
+        data_btn.clicked.connect(lambda:data_box.setText(select_events(date_del.text())))
+        data_btn.clicked.connect(lambda: del_btn.show())
 
-        db_box = QTextEdit(self)
+        data_box = QTextEdit(self)
 
-        tab8.layout.addWidget(host_label)
-        tab8.layout.addWidget(host_line)
-        tab8.layout.addWidget(db_user_label)
-        tab8.layout.addWidget(db_user_line)
-        tab8.layout.addWidget(pw_label)
-        tab8.layout.addWidget(pw_line)
-        tab8.layout.addWidget(db_label)
-        tab8.layout.addWidget(db_line)
-        tab8.layout.addWidget(db_btn)
-        tab8.layout.addWidget(db_box)
+        del_btn = QPushButton('Delete Events', self)
+        del_btn.hide()
+
+        tab8.layout.addWidget(del_label)
+        tab8.layout.addWidget(date_del)
+        tab8.layout.addWidget(data_btn)
+        tab8.layout.addWidget(data_box)
+        tab8.layout.addWidget(del_btn)
 
         tab8.setLayout(tab8.layout)
 
