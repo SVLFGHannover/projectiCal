@@ -1,7 +1,5 @@
 from PyQt6.QtWidgets import *
 from PyQt6.QtCore import QDateTime
-
-from DB import set_conn
 from Export import *
 from Insert import *
 
@@ -209,8 +207,11 @@ class ICal(QWidget):
         date_del = QDateTimeEdit(QDateTime.currentDateTime().toPyDateTime())
         date_del.setDisplayFormat('yyyy-MM-dd')
 
+        del_label_name = QLabel('Name', self)
+        del_line = QLineEdit(self)
+
         data_btn = QPushButton('View Events', self)
-        data_btn.clicked.connect(lambda:data_box.setText(select_events(date_del.text())))
+        data_btn.clicked.connect(lambda: data_box.setText(select_events(date_del.text(), del_line.text())))
         data_btn.clicked.connect(lambda: del_btn.show())
 
         data_box = QTextEdit(self)
@@ -220,6 +221,8 @@ class ICal(QWidget):
 
         tab8.layout.addWidget(del_label)
         tab8.layout.addWidget(date_del)
+        tab8.layout.addWidget(del_label_name)
+        tab8.layout.addWidget(del_line)
         tab8.layout.addWidget(data_btn)
         tab8.layout.addWidget(data_box)
         tab8.layout.addWidget(del_btn)
