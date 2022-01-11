@@ -26,3 +26,11 @@ footer {
 margin: 0 auto;
 margin-bottom:5%;
 }
+
+.doku {
+text-align:justify;
+}
+
+.doku ul {
+list-style-type:decimal;
+}
