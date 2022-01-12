@@ -10,7 +10,7 @@ from coop.VEvent import VEvent, insertCategory, insertResources, insertContact
 from coop.VAlarm import VAlarm
 from coop.RRule import RRule
 from ics import Calendar, Event
-
+from flask_UI.createEvent import *
 
 
 @app.route('/pythonlogin/', methods=['GET', 'POST'])
@@ -22,6 +22,7 @@ def login():
         cursor = db.connection.cursor(MySQLdb.cursors.DictCursor)
         cursor.execute('SELECT * FROM user WHERE name = %s AND email = %s', (name, email,))
         account = cursor.fetchone()
+
         if account:
             session['loggedin'] = True
             session['ID'] = account['ID']
@@ -62,161 +63,41 @@ def home():
 @app.route("/createEvent", methods=['GET', 'POST'])
 def createEvent():
     if 'loggedin' in session:
-        # Dropdown Calendars
-        cursor = db.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute('SELECT name FROM vcalendar WHERE userID = %s', (session["ID"],))
-        calendars = cursor.fetchall()
+        calendars = getCalendars(session["ID"])  # Select all Calendars for Dropdown menu
         calendars_L = list(calendars)
+
         if request.method == 'POST':
             name_E = request.form["name_E"]
             beschreibung_E = request.form["beschreibung_E"]
-            calendarname = request.form["test"]
+            calendarname = request.form["calendars"]
             cursor = db.connection.cursor(MySQLdb.cursors.DictCursor)
             cursor.execute('SELECT ID FROM vcalendar WHERE name = %s AND userID = %s', (calendarname, session["ID"],))
             calendarCatch = cursor.fetchone()
             calendarID = calendarCatch["ID"]
-            start_date, start_time, end_date, end_time, category, dtstart = "", "", "", "", "", ""
-            try:
-                start_date = request.form["start_date"]
-                start_time = request.form["start_time"]
-                dtstart = start_date + " " + start_time
-            except:
-                print("")
-            event = VEvent(name_E, beschreibung_E, dtstart, calendarID)
+            start_date = request.form["start_date"]
+            start_time = request.form["start_time"]
+            dtstart = start_date + " " + start_time
 
-            if request.form["emailT_A"]:
-                valarm = VAlarm("EMAIL")
-                valarm.trigger = "-P" + str(request.form["whenA_day"]) + "DT" + str(request.form["whenA_hour"]) + "T" + str(request.form["whenA_min"]) + "M" + str(request.form["whenA_sec"]) + "S"
-                valarm.duration = "P" + str(request.form["durA_day"]) + "DT" + str(request.form["durA_hour"]) + "T" + str(request.form["durA_min"]) + "M" + str(request.form["durA_sec"]) + "S"
-                valarm.repeat = request.form["countA"]
-                valarm.summary = request.form["emailT_A"]
-                cursor.execute('SELECT ID FROM user WHERE email = %s',
-                               (request.form["emailA_A"],))
-                attendeeCatch = cursor.fetchone()
-                if attendeeCatch:
-                    valarm.attendeeID = attendeeCatch["ID"]
-                else:
-                    attendee = User("", request.form["emailA_A"])
-                    cursor.execute(attendee.insertUser())
-                    db.connection.commit()
-                    valarm.attendeeID = "(SELECT ID FROM user ORDER BY ID DESC LIMIT 1)"
-                sql_alarm = valarm.insertAlarm()
-                cursor.execute(sql_alarm)
-                db.connection.commit()
-                event.dic_ID["valarmID"] = "(SELECT ID FROM valarm ORDER BY ID DESC LIMIT 1)"
-            elif request.form["sound_A"]:
-                valarm = VAlarm("AUDIO")
-                valarm.trigger = "-P" + str(request.form["whenA_day"]) + "DT" + str(
-                    request.form["whenA_hour"]) + "T" + str(request.form["whenA_min"]) + "M" + str(
-                    request.form["whenA_sec"]) + "S"
-                valarm.duration = "P" + str(request.form["durA_day"]) + "DT" + str(
-                    request.form["durA_hour"]) + "T" + str(request.form["durA_min"]) + "M" + str(
-                    request.form["durA_sec"]) + "S"
-                valarm.repeat = request.form["countA"]
-                """cursor.execute(f"INSERT INTO attach ('attachment') VALUES ( NULL )") # weiß nicht weiter
-                db.connection.commit()
-                valarm.attach = "(SELECT ID FROM attach ORDER BY ID DESC LIMIT 1)"""
-                sql_alarm = valarm.insertAlarm()
-                print(sql_alarm)
-                cursor.execute(sql_alarm)
-                db.connection.commit()
-                event.dic_ID["valarmID"] = "(SELECT ID FROM valarm ORDER BY ID DESC LIMIT 1)"
-            elif request.form["display_A"]:
-                valarm = VAlarm("DISPLAY")
-                valarm.trigger = "-P" + str(request.form["whenA_day"]) + "DT" + str(
-                    request.form["whenA_hour"]) + "T" + str(request.form["whenA_min"]) + "M" + str(
-                    request.form["whenA_sec"]) + "S"
-                valarm.duration = "P" + str(request.form["durA_day"]) + "DT" + str(
-                    request.form["durA_hour"]) + "T" + str(request.form["durA_min"]) + "M" + str(
-                    request.form["durA_sec"]) + "S"
-                valarm.repeat = request.form["countA"]
-                valarm.description = request.form["display_A"]
-                sql_alarm = valarm.insertAlarm()
-                cursor.execute(sql_alarm)
-                db.connection.commit()
-                event.dic_ID["valarmID"] = "(SELECT ID FROM valarm ORDER BY ID DESC LIMIT 1)"
+            event = VEvent(name_E, beschreibung_E, dtstart, calendarID)  # Creating Event Object for easier handling
+            getVAlarm(event)
+            getEndDate(event)  # Duration or Dtend
+            getRRule(event)
 
-            if request.form["end_date"]:
-                end_date = request.form["end_date"]
-                end_time = request.form["end_time"]
-                dtend = end_date + " " + end_time
-                event.dtend = dtend
-            else:
-                dur_sec = request.form["dur_sec"]
-                dur_min = request.form["dur_min"]
-                dur_hour = request.form["dur_hour"]
-                dur_day = request.form["dur_day"]
-                dur_week = request.form["dur_week"]
-                event.duration = "P" + str(dur_week) + "W" + str(dur_day) + "DT" + str(dur_hour) + "T" + str(
-                    dur_min) + "M" + str(dur_sec) + "S"
+            fillGeoData(request.form["lat"], request.form["lon"], request.form["city"], request.form["street"], event)
 
-            def rruleRest():
-                if request.form["rr_count"]:
-                    rrule.count = request.form["rr_count"]
-                elif request.form["rr_until"]:
-                    rrule.until = request.form["rr_until"]
-                sql_rrule = rrule.insertRRule()
-                cursor.execute(sql_rrule)
-                db.connection.commit()
-                event.dic_ID["rruleID"] = "(SELECT ID FROM rrule ORDER BY ID DESC LIMIT 1)"
+            event.dic_ID["categoriesID"] = getOther(request.form["category"], "CATEGORIES", "CATEGORY")
+            event.dic_ID["resourcesID"] = getOther(request.form["resources"], "RESOURCES", "RESOURCE")
+            event.dic_ID["contactID"] = getOther(request.form["contact"], "CONTACT", "CONTACT")
 
-            if request.form["rr_hourly"]:
-                rrule = RRule()
-                rrule.freq = "HOURLY"
-                rrule.interval = request.form["rr_hourly"]
-                rruleRest()
-            elif request.form["rr_daily"]:
-                rrule = RRule()
-                rrule.freq = "DAILY"
-                rrule.interval = request.form["rr_daily"]
-                rruleRest()
-
-            elif request.form["rr_weekly"]:
-                print("weekly")
-                rrule = RRule()
-                rrule.freq = "WEEKLY"
-                rrule.interval = request.form["rr_weekly"]
-
-                selected_weekdays = request.form.getlist("rr_weekdays")
-                rrule.byday = ', '.join(selected_weekdays)
-                print(rrule.byday)
-                rruleRest()
-
-            if request.form["category"]:
-                category = request.form["category"]
-                sql_category = insertCategory(category)
-                cursor.execute(sql_category)
-                db.connection.commit()
-                event.dic_ID["categoriesID"] = "(SELECT ID FROM categories ORDER BY ID DESC LIMIT 1)"
-            if request.form["lat"] and request.form["lon"]:
-                lat = request.form["lat"]
-                lon = request.form["lon"]
-                event.geolat = lat
-                event.geolng = lon
-            elif request.form["city"]:
-                street = request.form["street"]
-                city = request.form["city"]
-                event.location = city + ", " + street
-            if request.form["resources"]:
-                resources = request.form["resources"]
-                sql_resources = insertResources(resources)
-                cursor.execute(sql_resources)
-                db.connection.commit()
-                event.dic_ID["resourcesID"] = "(SELECT ID FROM resources ORDER BY ID DESC LIMIT 1)"
-            if request.form["contact"]:
-                contact = request.form["contact"]
-                sql_contact = insertContact(contact)
-                cursor.execute(sql_contact)
-                db.connection.commit()
-                event.dic_ID["contactID"] = "(SELECT ID FROM contact ORDER BY ID DESC LIMIT 1)"
-            cursor.execute(event.insertEvent())
             print(event.insertEvent())
+            cursor.execute(event.insertEvent())  # Einfügen des vEvents in die DB
+
             db.connection.commit()
             return render_template("createEvent.html", title='Account', loggedin=True, calendars=calendars_L,
                                    msg="Event wurde erstellt")
         return render_template("createEvent.html", title='Account', loggedin=True, calendars=calendars_L)
     else:
-        redirect(url_for('home'))
+        redirect(url_for('home'))  # site can only be accessed when logged in
 
 
 @app.route("/createCalendar", methods=['GET', 'POST'])
@@ -325,6 +206,7 @@ def createICSEvent():
         return render_template("info.html", file=f'{event["summary"]}.ics', loggedin=True)
     else:
         redirect(url_for('home'))
+
 
 @app.route('/info', methods=['GET', 'POST'])
 def info():

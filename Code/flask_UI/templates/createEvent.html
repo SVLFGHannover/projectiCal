@@ -11,7 +11,7 @@
                 <input class="form-control" id="nameInput" name="name_E" required type="text"></div>
             <div class="form-group col-md-6">
                 <label for="calendarInput">Kalender auswählen:</label>
-                <select class="form-control" id="calendarInput" name='test'>
+                <select class="form-control" id="calendarInput" name='calendars'>
                     {% for element in calendars %}
                     <option value='{{ element["name"] }}'> {{ element["name"] }}</option>
                     {% endfor %}
