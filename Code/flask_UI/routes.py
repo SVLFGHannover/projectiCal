@@ -9,8 +9,8 @@ from coop.VCalendar import VCalendar
 from coop.VEvent import VEvent, insertCategory, insertResources, insertContact
 from coop.VAlarm import VAlarm
 from coop.RRule import RRule
-from ics import Calendar, Event
 from flask_UI.createEvent import *
+from flask_UI.createICS import *
 
 
 @app.route('/pythonlogin/', methods=['GET', 'POST'])
@@ -67,32 +67,11 @@ def createEvent():
         calendars_L = list(calendars)
 
         if request.method == 'POST':
-            name_E = request.form["name_E"]
-            beschreibung_E = request.form["beschreibung_E"]
-            calendarname = request.form["calendars"]
             cursor = db.connection.cursor(MySQLdb.cursors.DictCursor)
-            cursor.execute('SELECT ID FROM vcalendar WHERE name = %s AND userID = %s', (calendarname, session["ID"],))
-            calendarCatch = cursor.fetchone()
-            calendarID = calendarCatch["ID"]
-            start_date = request.form["start_date"]
-            start_time = request.form["start_time"]
-            dtstart = start_date + " " + start_time
-
-            event = VEvent(name_E, beschreibung_E, dtstart, calendarID)  # Creating Event Object for easier handling
-            getVAlarm(event)
-            getEndDate(event)  # Duration or Dtend
-            getRRule(event)
-
-            fillGeoData(request.form["lat"], request.form["lon"], request.form["city"], request.form["street"], event)
-
-            event.dic_ID["categoriesID"] = getOther(request.form["category"], "CATEGORIES", "CATEGORY")
-            event.dic_ID["resourcesID"] = getOther(request.form["resources"], "RESOURCES", "RESOURCE")
-            event.dic_ID["contactID"] = getOther(request.form["contact"], "CONTACT", "CONTACT")
-
-            print(event.insertEvent())
-            cursor.execute(event.insertEvent())  # Einfügen des vEvents in die DB
-
+            event = createE(session["ID"])                   # create Event from Inputform
+            cursor.execute(event.insertEvent())  # Insert VEvent into DB
             db.connection.commit()
+
             return render_template("createEvent.html", title='Account', loggedin=True, calendars=calendars_L,
                                    msg="Event wurde erstellt")
         return render_template("createEvent.html", title='Account', loggedin=True, calendars=calendars_L)
@@ -182,28 +161,13 @@ def createICS():
 
 @app.route('/createICSEvent', methods=['GET', 'POST'])
 def createICSEvent():
-    if request.method == 'POST' and 'eventID' in request.form:
-        test = ""
-        id = request.form["eventID"]
-        cursor = db.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute(f'SELECT * FROM vevent WHERE ID = {id}')
-        event = cursor.fetchone()
-        print(event)
-        cursor.execute(f'SELECT * FROM vcalendar WHERE ID = {event["vcalendarID"]}')
-        calendar = cursor.fetchone()
-        print(calendar)
-        test = str(event) + "<p></p><p></p>" + str(calendar)
-        c = Calendar()
-        e = Event()
-
-        e.name = event["summary"]
-        e.begin = event["dtstart"]
-        print(event["duration"])
-        e.end = event["dtend"]
-        c.events.add(e)
-        with open(f'flask_UI/ics_files/{event["summary"]}.ics', 'w') as f:
-            f.write(str(c))
-        return render_template("info.html", file=f'{event["summary"]}.ics', loggedin=True)
+    if request.method == 'POST':
+        if 'eventID' in request.form:
+            icsString = createICSfromEvent(request.form["eventID"])
+            return render_template("info.html", file=f'{icsString}', loggedin=True)
+        if 'calendarID' in request.form:
+            icsString = createICSfromCalendar(request.form["calendarID"])
+            return render_template("info.html", file=f"{icsString}", loggedin=True)
     else:
         redirect(url_for('home'))
 
@@ -214,3 +178,4 @@ def info():
         return render_template("info.html", file="", loggedin=True)
     else:
         redirect(url_for('home'))
+
