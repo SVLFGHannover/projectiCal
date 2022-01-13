@@ -43,24 +43,27 @@ def rruleRest(event, rrule):
 
 
 def getRRule(event):
+    rrule = RRule()
     if request.form["rr_hourly"]:
-        rrule = RRule()
         rrule.freq = "HOURLY"
         rrule.interval = request.form["rr_hourly"]
-        rruleRest(event, rrule)
     elif request.form["rr_daily"]:
-        rrule = RRule()
         rrule.freq = "DAILY"
         rrule.interval = request.form["rr_daily"]
-        rruleRest(event, rrule)
     elif request.form["rr_weekly"]:
-        rrule = RRule()
         rrule.freq = "WEEKLY"
         rrule.interval = request.form["rr_weekly"]
-
         selected_weekdays = request.form.getlist("rr_weekdays")
         rrule.byday = ', '.join(selected_weekdays)
-        rruleRest(event, rrule)
+    elif request.form["rr_monthly"]:
+        rrule.freq = "MONTHLY"
+        rrule.interval = request.form["rr_monthly"]
+    elif request.form["rr_yearly"]:
+        rrule.freq = "YEARLY"
+        rrule.interval = request.form["rr_yearly"]
+
+    rruleRest(event, rrule)
+
     return event
 
 
@@ -132,4 +135,31 @@ def fillGeoData(lat, lon, city, street, event):
         event.geolng = lon
     elif city:
         event.location = city + ", " + street
+    return event
+
+
+def createE(sessionID):
+    name_E = request.form["name_E"]
+    beschreibung_E = request.form["beschreibung_E"]
+    calendarname = request.form["calendars"]
+    cursor = db.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute('SELECT ID FROM vcalendar WHERE name = %s AND userID = %s', (calendarname, sessionID,))
+    calendarCatch = cursor.fetchone()
+    calendarID = calendarCatch["ID"]
+    start_date = request.form["start_date"]
+    start_time = request.form["start_time"]
+    dtstart = start_date + " " + start_time
+
+    event = VEvent(name_E, beschreibung_E, dtstart, calendarID)  # Creating Event Object for easier handling
+    getVAlarm(event)
+    getEndDate(event)  # Duration or Dtend
+    getRRule(event)
+
+    fillGeoData(request.form["lat"], request.form["lon"], request.form["city"], request.form["street"], event)
+
+    event.dic_ID["categoriesID"] = getOther(request.form["category"], "CATEGORIES", "CATEGORY")
+    event.dic_ID["resourcesID"] = getOther(request.form["resources"], "RESOURCES", "RESOURCE")
+    event.dic_ID["contactID"] = getOther(request.form["contact"], "CONTACT", "CONTACT")
+
+    print(event.insertEvent())
     return event

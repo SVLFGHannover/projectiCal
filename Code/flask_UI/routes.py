@@ -11,6 +11,7 @@ from coop.VAlarm import VAlarm
 from coop.RRule import RRule
 from flask_UI.createEvent import *
 from flask_UI.createICS import *
+from flask_UI.displayHome import *
 
 
 @app.route('/pythonlogin/', methods=['GET', 'POST'])
@@ -44,18 +45,7 @@ def about():
 @app.route("/home")
 def home():
     if 'loggedin' in session:
-        events = []
-        cursor = db.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute('SELECT ID FROM vcalendar WHERE userID = %s', (session["ID"],))
-        calendars_T = cursor.fetchall()
-        calendars = list(calendars_T)
-
-        for e in calendars:
-            for x, y in e.items():
-                cursor.execute(f'SELECT * FROM vevent WHERE vcalendarID = {int(y)}')
-                events_T = cursor.fetchall()
-                for k in list(events_T):
-                    events.append(k)
+        events = displayHomeEvents(session["ID"])
         return render_template("home.html", loggedin=True, msg="", events=events)
     return render_template("home.html", msg="", loggedin=False)
 
@@ -85,10 +75,7 @@ def createCalendar():
         if request.method == 'POST' and 'name_C' in request.form:
             # Create variables for easy access
             name = request.form['name_C']
-            try:
-                beschreibung = request.form['beschreibung']
-            except:
-                beschreibung = ""
+            beschreibung = request.form['beschreibung']
             cursor = db.connection.cursor(MySQLdb.cursors.DictCursor)
             cursor.execute('SELECT * FROM vcalendar WHERE name = %s', (name,))
             calender = cursor.fetchone()
@@ -149,7 +136,6 @@ def register():
 @app.route('/createICS', methods=['GET', 'POST'])
 def createICS():
     if session["loggedin"]:
-        events = []
         cursor = db.connection.cursor(MySQLdb.cursors.DictCursor)
         cursor.execute('SELECT * FROM vcalendar WHERE userID = %s', (session["ID"],))
         calendars_T = cursor.fetchall()

@@ -58,7 +58,7 @@
   {% if x["valarmID"] %}
   <span class="badge badge-danger">Alarm</span>
   {% endif %}
-    {% if x["rRuleID"] %}
+    {% if x["rruleID"] %}
   <span class="badge badge-info">Wiederholend</span>
   {% endif %}
 <form action="{{ url_for('createICSEvent') }}" method="post">
@@ -72,16 +72,19 @@
   </h3>
   <div class="card-body">
     <h5 class="card-title"></h5>
-    <h6 class="card-subtitle text-muted">Kalender: {{x["vcalendarID"]}}</h6>
+    <h6 class="card-subtitle text-muted">Kalender: {{ x["vcalendarID"] }}</h6>
     <p class="card-text">{{x["description"]}}</div>
   <ul class="list-group list-group-flush">
-    <li class="list-group-item">Kategorie: {{x["categoriesID"]}}</li>
-    <li class="list-group-item">benötigte Gegenstände: {{x["resourcesID"]}}</li>
-    <li class="list-group-item">Gäste: {{x["attendeeID"]}}</li>
-    <li class="list-group-item">Ort: {{x["location"]}}</li>
+    {% if x["categoriesID"] %}<li class="list-group-item">Kategorie: {{x["categoriesID"]}}</li>{% endif %}
+    {% if x["resourcesID"] %}<li class="list-group-item">Ressourcen: {{x["resourcesID"]}}</li>{% endif %}
+    {% if x["attendeeID"] %}<li class="list-group-item">Gast: {{x["attendeeID"]}}</li>{% endif %}
+    {% if x["location"] %}<li class="list-group-item">Ort: {{x["location"]}}</li>{% endif %}
+    {% if x["geolat"] %}<li class="list-group-item">Geographische Koordinaten: {{x["geolng"]}}, {{x["geolat"]}}</li>{% endif %}
   </ul>
   <div class="card-footer text-muted">
-    Von: {{x["dtstart"]}} Bis: {{x["dtend"]}}
+    <p>Start: {{x["dtstart"]}}</p>
+    {% if x["dtend"] %}<p> Ende: {{x["dtend"]}}</p>{% endif %}
+    {% if x["duration"] %}<p>Dauer: {{x["duration"]}} </p>{% endif %}
   </div>
 </div></div>
 	  {% endfor %}
