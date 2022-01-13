@@ -164,10 +164,12 @@ def createICSEvent():
     if request.method == 'POST':
         if 'eventID' in request.form:
             icsString = createICSfromEvent(request.form["eventID"])
-            return render_template("info.html", file=f'{icsString}', loggedin=True)
+            output = f"Die Datei {icsString}.ics wurde erstellt."
+            return render_template("info.html", info=output, loggedin=True)
         if 'calendarID' in request.form:
             icsString = createICSfromCalendar(request.form["calendarID"])
-            return render_template("info.html", file=f"{icsString}", loggedin=True)
+            output = f"Die Datei {icsString}.ics wurde erstellt."
+            return render_template("info.html", info=output, loggedin=True)
     else:
         redirect(url_for('home'))
 
@@ -175,7 +177,20 @@ def createICSEvent():
 @app.route('/info', methods=['GET', 'POST'])
 def info():
     if session["loggedin"]:
-        return render_template("info.html", file="", loggedin=True)
+        return render_template("info.html", info="", loggedin=True)
     else:
         redirect(url_for('home'))
 
+
+@app.route('/deleteEvent', methods=['GET', 'POST'])
+def deleteEvent():
+    if request.method == 'POST' and "deleteID" in request.form:
+        cursor = db.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute(f'SELECT summary from vevent WHERE ID={request.form["deleteID"]};')
+        catch = cursor.fetchone()
+        cursor.execute(f'DELETE from vevent WHERE ID={request.form["deleteID"]};')
+        db.connection.commit()
+        output = f"Der Termin {catch['summary']} wurde gelöscht."
+        return render_template("info.html", info=output, loggedin=True)
+    else:
+        redirect(url_for('home'))
