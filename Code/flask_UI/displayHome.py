@@ -24,11 +24,13 @@ def displayHomeEvents(sessionID):
             if k["dtend"]:
                 k.update({"dtend": k["dtend"].strftime("%d.%m.%Y, %H:%M:%S")})
             elif k["duration"]:
-                pattern = '[P]([0-9]*)[W]([0-9]*)[D][T]([0-9]*)[T]([0-9]*)[M]([0-9]*)[S]'
+                pattern = '[P]([0-9]*)[D][T]([0-9]*)[T]([0-9]*)[M]([0-9]*)[S]'
                 test = re.findall(pattern, k["duration"])
+                print(k["duration"])
+                print(test)
                 test2 = test[0]
-                test3 = ["Wochen", "Tage", "Stunden", "Minuten", "Sekunden"]
-                test4 = ["eine Woche", "ein Tag", "eine Stunde", "eine Minute", "eine Sekunde"]
+                test3 = ["Tage", "Stunden", "Minuten", "Sekunden"]
+                test4 = ["ein Tag", "eine Stunde", "eine Minute", "eine Sekunde"]
                 teststring = ""
                 for x in range(len(test3)):
                     if test2[x] is not "":

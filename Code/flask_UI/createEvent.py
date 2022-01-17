@@ -1,3 +1,5 @@
+import datetime
+
 from flask_UI import app, db
 from flask_mysqldb import MySQL
 import MySQLdb.cursors
@@ -5,6 +7,7 @@ from coop.VEvent import VEvent, insertCategory, insertResources, insertContact
 from flask import request
 from coop.RRule import RRule
 from coop.VAlarm import VAlarm
+
 
 
 def getCalendars(sessionid):
@@ -24,9 +27,8 @@ def getEndDate(event):
         dur_sec = request.form["dur_sec"]
         dur_min = request.form["dur_min"]
         dur_hour = request.form["dur_hour"]
-        dur_day = request.form["dur_day"]
-        dur_week = request.form["dur_week"]
-        event.duration = "P" + str(dur_week) + "W" + str(dur_day) + "DT" + str(dur_hour) + "T" + str(
+        dur_days = request.form["dur_day"] + 7*request.form["dur_week"]
+        event.duration = "P" + str(dur_days) + "DT" + str(dur_hour) + "T" + str(
             dur_min) + "M" + str(dur_sec) + "S"
 
 
@@ -97,16 +99,7 @@ def getVAlarm(event):
         cursor.execute(sql_alarm)
         db.connection.commit()
         event.dic_ID["valarmID"] = "(SELECT ID FROM valarm ORDER BY ID DESC LIMIT 1)"
-    elif request.form["sound_A"]:
-        valarm = VAlarm("AUDIO")
-        getVAlarmMainAttributes(valarm)
-        """cursor.execute(f"INSERT INTO attach ('attachment') VALUES ( NULL )") # weiß nicht weiter
-        db.connection.commit()
-        valarm.attach = "(SELECT ID FROM attach ORDER BY ID DESC LIMIT 1)"""
-        sql_alarm = valarm.insertAlarm()
-        cursor.execute(sql_alarm)
-        db.connection.commit()
-        event.dic_ID["valarmID"] = "(SELECT ID FROM valarm ORDER BY ID DESC LIMIT 1)"
+
     elif request.form["display_A"]:
         valarm = VAlarm("DISPLAY")
         getVAlarmMainAttributes(valarm)
@@ -115,7 +108,16 @@ def getVAlarm(event):
         cursor.execute(sql_alarm)
         db.connection.commit()
         event.dic_ID["valarmID"] = "(SELECT ID FROM valarm ORDER BY ID DESC LIMIT 1)"
-
+        """elif request.form["sound_A"]:
+            valarm = VAlarm("AUDIO")
+            getVAlarmMainAttributes(valarm)
+            cursor.execute(f"INSERT INTO attach ('attachment') VALUES ( NULL )") # weiß nicht weiter
+            db.connection.commit()
+            valarm.attach = "(SELECT ID FROM attach ORDER BY ID DESC LIMIT 1)
+            sql_alarm = valarm.insertAlarm()
+            cursor.execute(sql_alarm)
+            db.connection.commit()
+            event.dic_ID["valarmID"] = "(SELECT ID FROM valarm ORDER BY ID DESC LIMIT 1)"""
 
 def getOther(other, table, column):  # brauche einen vernünftigen Namen
     if other:
@@ -149,7 +151,6 @@ def createE(sessionID):
     start_date = request.form["start_date"]
     start_time = request.form["start_time"]
     dtstart = start_date + " " + start_time
-
     event = VEvent(name_E, beschreibung_E, dtstart, calendarID)  # Creating Event Object for easier handling
     getVAlarm(event)
     getEndDate(event)  # Duration or Dtend
@@ -160,6 +161,8 @@ def createE(sessionID):
     event.dic_ID["categoriesID"] = getOther(request.form["category"], "CATEGORIES", "CATEGORY")
     event.dic_ID["resourcesID"] = getOther(request.form["resources"], "RESOURCES", "RESOURCE")
     event.dic_ID["contactID"] = getOther(request.form["contact"], "CONTACT", "CONTACT")
+
+    event.uid = f"{datetime.datetime.now()}|PID|IPAdress"
 
     print(event.insertEvent())
     return event

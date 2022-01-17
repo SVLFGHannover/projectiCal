@@ -154,7 +154,7 @@ def createICSEvent():
             return render_template("info.html", info=output, loggedin=True)
         if 'calendarID' in request.form:
             icsString = createICSfromCalendar(request.form["calendarID"])
-            output = f"Die Datei {icsString}.ics wurde erstellt."
+            output = f"Die Datei {icsString} wurde erstellt."
             return render_template("info.html", info=output, loggedin=True)
     else:
         redirect(url_for('home'))

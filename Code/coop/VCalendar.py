@@ -4,7 +4,7 @@ class VCalendar:
         self.name = name
         self.description = description
         self.prodid = "SVLFG//iCalendar"                                 # Product Identifier, Default: SVLFG//iCalendar
-        self.version = "1.0"
+        self.version = "2.0"
         self.calscale = "gregorian"                                      # Art des Kalenders
         self.method = ""                                                 # ?
         self.xprop = "NULL"                                              # ?

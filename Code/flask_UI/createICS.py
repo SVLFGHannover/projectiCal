@@ -2,7 +2,20 @@ from icalendar import Calendar, Event
 from flask_UI import app, db
 import MySQLdb.cursors
 from flask import request
+from dateutil import parser
 
+
+def test(t):
+    if t < 10:
+        s = "0" + str(t)
+    else:
+        s = str(t)
+    return s
+
+
+def correctTime(time):
+    newtime = f"{test(time.year)}{test(time.month)}{test(time.day)}T{test(time.hour)}{test(time.minute)}{test(time.second)}Z"
+    return newtime
 
 def createICSfromEvent(eventID):
     cursor = db.connection.cursor(MySQLdb.cursors.DictCursor)
@@ -16,16 +29,22 @@ def createICSfromEvent(eventID):
     c["name"] = calendar["name"]
     c["description"] = calendar["description"]
     c["prodid"] = calendar["prodid"]
-
+    e["UID"] = event["uid"]
+    c["Version"] = calendar["version"]
     e["summary"] = event["summary"]
-    e["dtstart"] = event["dtstart"]
-    e["created"] = event["created"]
+
+    e["dtstart"] = correctTime(event["dtstart"])
+
+    e["created"] = correctTime(event['created'])
+    e["dtstamp"] = correctTime(event['dtstamp'])
     e["description"] = event["description"]
+    print(event["dtstart"])
+    print(event["dtend"])
 
     if event["duration"]:
         e["duration"] = event["duration"]
     else:
-        e["dtend"] = event["dtend"]
+        e["dtend"] = correctTime(event["dtend"])
 
     if event["categoriesID"]:
         cursor.execute(f'SELECT category FROM categories WHERE ID = {event["categoriesID"]}')
@@ -50,18 +69,21 @@ def createICSfromCalendar(calendarID):
     c["name"] = calendar["name"]
     c["description"] = calendar["description"]
     c["prodid"] = calendar["prodid"]
+    c["Version"] = calendar["version"]
     e = Event()
     for event in events:
 
         e["summary"] = event["summary"]
-        e["dtstart"] = event["dtstart"]
-        e["created"] = event["created"]
+        e["UID"] = event["uid"]
+        e["dtstart"] = correctTime(event["dtstart"])
+        e["dtstamp"] = correctTime(event["dtstamp"])
+        e["created"] = correctTime(event["created"])
         e["description"] = event["description"]
 
         if event["duration"]:
             e["duration"] = event["duration"]
-        else:
-            e["dtend"] = event["dtend"]
+        elif event["dtend"]:
+            e["dtend"] = correctTime(event["dtend"])
 
         if event["categoriesID"]:
             cursor.execute(f'SELECT category FROM categories WHERE ID = {event["categoriesID"]}')
