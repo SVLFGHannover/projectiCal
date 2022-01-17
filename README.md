@@ -18,13 +18,27 @@ Das Projekt wurde in Python geschrieben, ist jedoch aufgeteilt. Es gibt eine Fla
 ## Einrichten der Datenbank 
 
 
-Im Ordner Dokumentation ist die Datei "Anleitung Datenbank iCal erstellen.pdf" zu finden. Diese beschreibt, wie die benötigte Datenbank erstellt wird.
+Im Ordner [Dokumentation](https://github.com/SVLFGHannover/projectiCal/tree/master/Dokumentation) ist die Datei "Anleitung Datenbank iCal erstellen.pdf" zu finden. Diese beschreibt, wie die benötigte Datenbank erstellt wird.
+Die Datenbank-Datei iCal.sql befindet sich im Ordner [Code](https://github.com/SVLFGHannover/projectiCal/tree/master/Code)
 
 ## QT
 
 ### Technologies
+Die folgenden python-Pakete werden verwendet:
+- PyQt6
+- icalendar
+- datetime
+- mysql.connector
+
+Die Pakete sollen mit Paketinstallationsprogramm pip importiert werden.
 
 ### Setup
+
+Das Widget befindet sich als komprimierte macOS-Anwendung iCalendar.zip im Ordner [qt_UI](https://github.com/SVLFGHannover/projectiCal/tree/master/Code/qt_UI). Auf einer macOS-Plattform soll die Anwendung ausgepackt werden und mit Doppelklick gestartet werden.
+
+Plattformunabhängig kann das Widget direkt vom Quellcode gestartet werden, indem man im Terminal zu dem Ordner qt_UI gehet und den Befehl python3 Widget_iCal.py eingibt.
+
+Eine Anleitung - Anleitung iCalendar.pdf, die Funktionalitäten des Widgets beschreibt, befindet sich im Ordner [Dokumentation](https://github.com/SVLFGHannover/projectiCal/tree/master/Dokumentation).
 
 ## 4 Flask
 
