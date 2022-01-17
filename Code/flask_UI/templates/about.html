@@ -1,6 +1,44 @@
 
 {% extends "layout.html" %}
 {% block content %}
-    <h1>Dokumentation</h1>
+    <div class="container doku"> <h3>Dokumentation</h3>
+
+<h6>Was kann auf dieser Seite alles gemacht werden?</h6>
+        <ul><li>User können angelegt werden</li>
+<li>Termine können angelegt werden</li>
+<li>Kalender können angelegt werden</li>
+<li>Ics-Dateien können aus Events oder Kalendern erstellt werden</li>
+</ul>
+
+        <h5>1 ) User</h5>
+Ein User besteht aus Emailadresse und Username. Da dies (noch) eine lokale Webanwendung ist, wurde auf Passwörter verzichtet. Unter dem Feld Registrieren kann ein neuer Benutzer angelegt werden.
+Ist dies erfolgreich geschehen, sollte die Meldung „Du wurdest erfolgreich registriert!“ erscheinen.
+Für jeden neuen Benutzer wird direkt ein Kalender angelegt.
+Über die Startseite kann man sich nun einloggen.
+        <p></p>
+        <h5>2 ) Was ist das iCalendar-Format?</h5>
+Das iCalendar-Format wurde zum Austausch von Kalenderdaten erstellt. Es hat verschiedene Parameter mit denen sich komplexe Termine, zum Beispiel wiederholend oder mit Alarm, erstellen lassen.
+Notwendig ist ein Start- und Endzeitpunkt, sowie ein Name. Die Formulare, welche diese Webanwendung verwendet, basieren auf dem iCalendar-Format.
+Für weitere Informationen kann die iCalendar-Spezifikation verwendet werden.
+iCalendar (RFC 5545) | RFC Specifications
+           <p></p>
+        <h5>3 ) Termine </h5>
+Ein Termin benötigt einen Titel, ein Start und Enddatum und muss zu einem Kalender gehören. Standardmäßig ausgewählt ist der Hauptkalender.
+Alternativ zum Enddatum kann auch eine Dauer angegeben werden.
+Ein Alarm kann entweder als E-Mail, Sound oder Anzeige verwendet werden.
+Wiederholungen des Events sind von stündlichen bis jährlichen Rhythmus möglich. Dieser Rhythmus kann in manchen Fällen genauer definiert sein. Beispielsweise kann bei einem wöchentlichen Rhythmus  ein bestimmter Wochentag angegeben werden.
+Ein Teilnehmer kann mit der zugehörigen E-Mailadresse abgespeichert werden.
+Der Ort kann als geographischer Längen- und Breitengrad, oder als standardmäßige Adresse angegeben werden.
+Mit dem Ressourcenfeld sind zum Beispiel Gegenstände oder Räumlichkeiten gemeint, welche für den Termin benötigt werden.
+Eine Kategorie dient als zusätzliche Einteilung der Termins.
+Alle diese Informationen sind iCalendar konform. Sie können also von anderen Kalendern aufgegriffen werden.
+           <p></p>
+        <h5>4 ) Kalender</h5>
+Der Kalender ist dazu da Termine, welche Ähnlichkeiten aufweisen, zu ordnen. Zum Beispiel kann ein Kalender für Urlaubstage angelegt werden. Der Kalender kann dann beim Termin anlegen ausgewählt werden.
+           <p></p>
+        <h5>5 ) Exportieren der ICS-Dateien</h5>
+Der große Vorteil beim Verwenden des iCalender-Formats ist, dass die exportierten Dateien auch in anderen Kalendern, zum Beispiel den Google Calendar, verwendet werden können. Dabei ist es möglich entweder auf der Startseite einzelne Termine zu exportieren oder auf der Seite ICS-Kalender erstellen einen kompletten Kalender zu exportieren.
+<p></p>
+        </div>
 {% endblock content %}
 

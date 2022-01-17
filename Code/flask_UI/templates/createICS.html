@@ -13,7 +13,10 @@
     <h5 class="card-title"></h5>
     <h6 class="card-subtitle text-muted">Kalender {{x["ID"]}}</h6>
     <p class="card-text">{{x["description"]}}</div>
-  <button class="btn btn-primary col-6 test">ICS-Datei erstellen</button>
+  <form action="{{ url_for('createICSEvent') }}" method="post">
+      <input type="hidden" name="calendarID" value="{{ x['ID'] }}">
+            <input type="submit" value="ics-Datei erstellen"/>
+        </form>
 </div></div>
 	  {% endfor %}
     </div></div>

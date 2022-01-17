@@ -15,8 +15,7 @@ class RRule:
         self.bysetpos = ""          # “chooses” the 'nth' occurrence within a set of dates, must be used with by...
         self.wkst = "MO"              # Weekstart ( default Monday )
 
-    def insertRRule(self, db):
-        mycursor = db.cursor()
+    def insertRRule(self):
         sql_InsertRRule = f"INSERT INTO `rrule` (`freq`, `until`, `count`," \
                           f" `interval`, `bysecond`, `byminute`," \
                           f"`byhour`, `byday`, `bymonthday`, `byyearday`, `byweekno`," \
@@ -26,9 +25,4 @@ class RRule:
                           f"{self.interval},'{self.bysecond}','{self.byminute}'," \
                           f"'{self.byhour}','{self.byday}','{self.bymonthday}','{self.byyearday}','{self.byweekno}'," \
                           f"'{self.bymonth}','{self.bysetpos}','{self.wkst}')"
-        print(sql_InsertRRule)
-        try:
-            mycursor.execute(sql_InsertRRule)
-            db.commit()
-        except:
-            db.rollback()
+        return sql_InsertRRule

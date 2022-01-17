@@ -14,7 +14,7 @@
         </div>
         <div>
           <h2>Termin anlegen</h2>
-          <p>Hier kommt etwas hin.</p>
+          <p>Hier können sie einen neuen Termin anlegen.</p>
           <a href="{{url_for('createEvent')}}" class="btn btn-primary">
             Hier klicken!
           </a>
@@ -26,7 +26,7 @@
         </div>
         <div>
           <h2>Kalender anlegen</h2>
-          <p>Hier kommt auch etwas hin.</p>
+          <p>Hier können sie einen neuen Kalender anlegen.</p>
           <a href="{{url_for('createCalendar')}}" class="btn btn-primary">
             Hier klicken!
           </a>
@@ -38,7 +38,7 @@
         </div>
         <div>
           <h2>ICS-Kalender erstellen</h2>
-          <p>Ich bin kein Texter.</p>
+          <p>Hier können sie aus ihren angelegten Kalendern ics-Dateien erstellen.</p>
           <a href="{{url_for('createICS')}}" class="btn btn-primary">
             Hier klicken!
           </a>
@@ -58,22 +58,33 @@
   {% if x["valarmID"] %}
   <span class="badge badge-danger">Alarm</span>
   {% endif %}
-    {% if x["rRuleID"] %}
+    {% if x["rruleID"] %}
   <span class="badge badge-info">Wiederholend</span>
   {% endif %}
+<form action="{{ url_for('createICSEvent') }}" method="post">
+      <input type="hidden" name="eventID" value="{{ x['ID'] }}">
+            <input type="submit" value="ics-Event erstellen"/>
+        </form>
+<form action="{{ url_for('deleteEvent') }}" method="post">
+      <input type="hidden" name="deleteID" value="{{ x['ID'] }}">
+            <input type="submit" value="Event löschen"/>
+        </form>
   </h3>
   <div class="card-body">
     <h5 class="card-title"></h5>
-    <h6 class="card-subtitle text-muted">Kalender: {{x["vcalendarID"]}}</h6>
+    <h6 class="card-subtitle text-muted">Kalender: {{ x["vcalendarID"] }}</h6>
     <p class="card-text">{{x["description"]}}</div>
   <ul class="list-group list-group-flush">
-    <li class="list-group-item">Kategorie: {{x["categoriesID"]}}</li>
-    <li class="list-group-item">benötigte Gegenstände: {{x["resourcesID"]}}</li>
-    <li class="list-group-item">Gäste: {{x["attendeeID"]}}</li>
-    <li class="list-group-item">Ort: {{x["location"]}}</li>
+    {% if x["categoriesID"] %}<li class="list-group-item">Kategorie: {{x["categoriesID"]}}</li>{% endif %}
+    {% if x["resourcesID"] %}<li class="list-group-item">Ressourcen: {{x["resourcesID"]}}</li>{% endif %}
+    {% if x["attendeeID"] %}<li class="list-group-item">Gast: {{x["attendeeID"]}}</li>{% endif %}
+    {% if x["location"] %}<li class="list-group-item">Ort: {{x["location"]}}</li>{% endif %}
+    {% if x["geolat"] %}<li class="list-group-item">Geographische Koordinaten: {{x["geolng"]}}, {{x["geolat"]}}</li>{% endif %}
   </ul>
   <div class="card-footer text-muted">
-    Von: {{x["dtstart"]}} Bis: {{x["dtend"]}}
+    <p>Start: {{x["dtstart"]}}</p>
+    {% if x["dtend"] %}<p> Ende: {{x["dtend"]}}</p>{% endif %}
+    {% if x["duration"] %}<p>Dauer: {{x["duration"]}} </p>{% endif %}
   </div>
 </div></div>
 	  {% endfor %}
@@ -83,7 +94,7 @@
     <div class="row align-items-center g-lg-5 py-5">
       <div class="col-lg-7 text-center text-lg-start">
         <h1 class="display-4 fw-bold lh-1 mb-3">iCalendar</h1>
-        <p class="col-lg-10 fs-4">Hier kommt ein Text hin</p>
+        <p class="col-lg-10 fs-4">Dies ist die Startseite des Ausbildungsprojektes, welches sich mit der Erstellung eines Kalenders basierend auf dem iCalendar-Format beschäftigt.</p>
       </div>
       			<form action="{{ url_for('login') }}" method="post">
 				<label for="email">
