@@ -1,5 +1,5 @@
 import Export
-from DB import db_insert, db_request
+from DB import db_insert, db_request, db_del
 
 
 def insert_user(name, email):
@@ -66,10 +66,10 @@ def select_events(date, name):
     if name == '':
         mess = 'Events all user: \n'
         events_req = db_request(
-            "SELECT summary, dtstart, dtend, attendeeID FROM `VEvent` WHERE dtend < '{0}'".format(date))
+            "SELECT summary, dtstart, dtend, attendeeID, ID FROM `VEvent` WHERE dtend < '{0}'".format(date))
         for ev in events_req:
             mess += str(ev[0]) + ' ' + ev[1].strftime(format="%d.%m.%y %H:%M") + ' - ' + ev[2].strftime(
-                format="%d.%m.%y %H:%M") + ' - ' + Export.request_user_name(ev[3]) + '\n'
+                format="%d.%m.%y %H:%M") + ' - ' + Export.request_user_name(ev[3]) + ' ID = ' + str(ev[4]) + '\n'
         return mess
     else:
         mess = 'Events {0}: \n'.format(name)
@@ -84,3 +84,20 @@ def select_events(date, name):
                 mess += str(ev[0]) + ' ' + ev[1].strftime(format="%d.%m.%y %H:%M") + ' - ' + ev[2].strftime(
                     format="%d.%m.%y %H:%M") + '\n'
             return mess
+
+
+def delete_events(date, name, event_id):
+    if event_id == '':
+        if name == '':
+            db_del("DELETE FROM `VEvent` WHERE dtend <  '{0}'".format(date))
+            return 'Events deleted'
+        else:
+            id_user = Export.request_user_id(name)
+            if id_user is None:
+                return 'Unknown user'
+            else:
+                db_del("DELETE FROM `VEvent` WHERE dtend < '{0}' AND attendeeID = {1}".format(date, id_user))
+                return 'Events deleted'
+    else:
+        db_del("DELETE FROM `VEvent` WHERE ID = '{0}' ".format(event_id))
+        return 'Event deleted'

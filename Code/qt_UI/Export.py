@@ -4,6 +4,22 @@ from datetime import timedelta
 from Insert import *
 
 
+def show_user():
+    user = ''
+    myresult_user = db_request("SELECT name FROM User")
+    for usr in myresult_user:
+        user += usr[0] + '\n'
+    return user
+
+
+def show_cal():
+    cal = ''
+    myresult_cal = db_request("SELECT name, userID FROM VCalendar")
+    for c in myresult_cal:
+        cal += c[0] + ', User - ' + request_user_name(c[1]) + '\n'
+    return cal
+
+
 def request_user_id(name):
     myresult_user = db_request("SELECT id FROM User Where name = '{0}'".format(name))
     if not myresult_user:

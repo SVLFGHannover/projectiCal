@@ -119,6 +119,9 @@ class ICal(QWidget):
 
         cal_insert_box = QTextEdit(self)
 
+        cal_all_btn = QPushButton('Show Calendars', self)
+        cal_all_btn.clicked.connect(lambda: cal_insert_box.setText(show_cal()))
+
         tab4.layout.addWidget(cal_nam_label)
         tab4.layout.addWidget(cal_name_line)
         tab4.layout.addWidget(cal_user_label)
@@ -127,6 +130,7 @@ class ICal(QWidget):
         tab4.layout.addWidget(cal_desc_line)
         tab4.layout.addWidget(cal_btn)
         tab4.layout.addWidget(cal_insert_box)
+        tab4.layout.addWidget(cal_all_btn)
         tab4.setLayout(tab4.layout)
 
         tab5.layout = QVBoxLayout(self)
@@ -142,12 +146,16 @@ class ICal(QWidget):
 
         user_box = QTextEdit(self)
 
+        user_all_btn = QPushButton('Show Users', self)
+        user_all_btn.clicked.connect(lambda: user_box.setText(show_user()))
+
         tab5.layout.addWidget(user_label)
         tab5.layout.addWidget(user_line)
         tab5.layout.addWidget(email_label)
         tab5.layout.addWidget(email_line)
         tab5.layout.addWidget(user_btn)
         tab5.layout.addWidget(user_box)
+        tab5.layout.addWidget(user_all_btn)
 
         tab5.setLayout(tab5.layout)
 
@@ -210,19 +218,30 @@ class ICal(QWidget):
         del_label_name = QLabel('Name', self)
         del_line = QLineEdit(self)
 
+        del_label_id = QLabel('Event ID', self)
+        del_label_id.hide()
+        del_line_id = QLineEdit(self)
+        del_line_id.hide()
+
         data_btn = QPushButton('View Events', self)
         data_btn.clicked.connect(lambda: data_box.setText(select_events(date_del.text(), del_line.text())))
         data_btn.clicked.connect(lambda: del_btn.show())
+        data_btn.clicked.connect(lambda: del_label_id.show())
+        data_btn.clicked.connect(lambda: del_line_id.show())
 
         data_box = QTextEdit(self)
 
         del_btn = QPushButton('Delete Events', self)
+        del_btn.clicked.connect(
+            lambda: data_box.setText(delete_events(date_del.text(), del_line.text(), del_line_id.text())))
         del_btn.hide()
 
         tab8.layout.addWidget(del_label)
         tab8.layout.addWidget(date_del)
         tab8.layout.addWidget(del_label_name)
         tab8.layout.addWidget(del_line)
+        tab8.layout.addWidget(del_label_id)
+        tab8.layout.addWidget(del_line_id)
         tab8.layout.addWidget(data_btn)
         tab8.layout.addWidget(data_box)
         tab8.layout.addWidget(del_btn)
