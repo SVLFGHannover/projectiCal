@@ -26,6 +26,7 @@ class ICal(QWidget):
         tab5 = QWidget()
         tab6 = QWidget()
         tab7 = QWidget()
+        tab8 = QWidget()
 
         tabs = QTabWidget()
         tabs.addTab(tab1, 'Insert')
@@ -35,6 +36,7 @@ class ICal(QWidget):
         insert_tab.addTab(tab3, 'Event')
         insert_tab.addTab(tab4, 'Calendar')
         insert_tab.addTab(tab5, 'User')
+        insert_tab.addTab(tab8, 'Delete Events')
 
         export_tab = QTabWidget()
         export_tab.addTab(tab6, 'Event')
@@ -56,7 +58,7 @@ class ICal(QWidget):
         event_cal_label = QLabel('Calendar')
         event_cal_line = QLineEdit(self)
 
-        event_user_label = QLabel('User (optional)')
+        event_user_label = QLabel('User')
         event_user_line = QLineEdit(self)
 
         stat_label = QLabel('Start')
@@ -76,13 +78,13 @@ class ICal(QWidget):
         event_rule.addItem('YEARLY')
 
         event_insert_btn = QPushButton('Insert', self)
-        event_insert_btn.clicked.connect(lambda: evemt_insert_box.setText(
+        event_insert_btn.clicked.connect(lambda: event_insert_box.setText(
             insert_event(event_name_line.text(), request_user_id(event_user_line.text()),
                          request_calendar_id(event_cal_line.text()),
                          date_start.text(), date_end.text(),
                          QDateTime.currentDateTime().toPyDateTime(), insert_rule(event_rule.currentText()))))
 
-        evemt_insert_box = QTextEdit(self)
+        event_insert_box = QTextEdit()
 
         tab3.layout.addWidget(event_nam_label)
         tab3.layout.addWidget(event_name_line)
@@ -97,7 +99,7 @@ class ICal(QWidget):
         tab3.layout.addWidget(even_rule_label)
         tab3.layout.addWidget(event_rule)
         tab3.layout.addWidget(event_insert_btn)
-        tab3.layout.addWidget(evemt_insert_box)
+        tab3.layout.addWidget(event_insert_box)
 
         tab3.setLayout(tab3.layout)
 
@@ -108,7 +110,7 @@ class ICal(QWidget):
         cal_user_label = QLabel('User')
         cal_user_line = QLineEdit(self)
 
-        cal_desc_label = QLabel('Description')
+        cal_desc_label = QLabel('Description (optional)')
         cal_desc_line = QLineEdit(self)
 
         cal_btn = QPushButton('Insert', self)
@@ -116,6 +118,9 @@ class ICal(QWidget):
             insert_cal(cal_name_line.text(), request_user_id(cal_user_line.text()), cal_desc_line.text())))
 
         cal_insert_box = QTextEdit(self)
+
+        cal_all_btn = QPushButton('Show Calendars', self)
+        cal_all_btn.clicked.connect(lambda: cal_insert_box.setText(show_cal()))
 
         tab4.layout.addWidget(cal_nam_label)
         tab4.layout.addWidget(cal_name_line)
@@ -125,6 +130,7 @@ class ICal(QWidget):
         tab4.layout.addWidget(cal_desc_line)
         tab4.layout.addWidget(cal_btn)
         tab4.layout.addWidget(cal_insert_box)
+        tab4.layout.addWidget(cal_all_btn)
         tab4.setLayout(tab4.layout)
 
         tab5.layout = QVBoxLayout(self)
@@ -132,7 +138,7 @@ class ICal(QWidget):
         user_label = QLabel('Name')
         user_line = QLineEdit(self)
 
-        email_label = QLabel('Email')
+        email_label = QLabel('Email (optional)')
         email_line = QLineEdit(self)
 
         user_btn = QPushButton('Insert', self)
@@ -140,12 +146,16 @@ class ICal(QWidget):
 
         user_box = QTextEdit(self)
 
+        user_all_btn = QPushButton('Show Users', self)
+        user_all_btn.clicked.connect(lambda: user_box.setText(show_user()))
+
         tab5.layout.addWidget(user_label)
         tab5.layout.addWidget(user_line)
         tab5.layout.addWidget(email_label)
         tab5.layout.addWidget(email_line)
         tab5.layout.addWidget(user_btn)
         tab5.layout.addWidget(user_box)
+        tab5.layout.addWidget(user_all_btn)
 
         tab5.setLayout(tab5.layout)
 
@@ -198,6 +208,45 @@ class ICal(QWidget):
         tab7.layout.addWidget(cal_btn_ics)
 
         tab7.setLayout(tab7.layout)
+
+        tab8.layout = QVBoxLayout(self)
+
+        del_label = QLabel('Date')
+        date_del = QDateTimeEdit(QDateTime.currentDateTime().toPyDateTime())
+        date_del.setDisplayFormat('yyyy-MM-dd')
+
+        del_label_name = QLabel('Name', self)
+        del_line = QLineEdit(self)
+
+        del_label_id = QLabel('Event ID', self)
+        del_label_id.hide()
+        del_line_id = QLineEdit(self)
+        del_line_id.hide()
+
+        data_btn = QPushButton('View Events', self)
+        data_btn.clicked.connect(lambda: data_box.setText(select_events(date_del.text(), del_line.text())))
+        data_btn.clicked.connect(lambda: del_btn.show())
+        data_btn.clicked.connect(lambda: del_label_id.show())
+        data_btn.clicked.connect(lambda: del_line_id.show())
+
+        data_box = QTextEdit(self)
+
+        del_btn = QPushButton('Delete Events', self)
+        del_btn.clicked.connect(
+            lambda: data_box.setText(delete_events(date_del.text(), del_line.text(), del_line_id.text())))
+        del_btn.hide()
+
+        tab8.layout.addWidget(del_label)
+        tab8.layout.addWidget(date_del)
+        tab8.layout.addWidget(del_label_name)
+        tab8.layout.addWidget(del_line)
+        tab8.layout.addWidget(del_label_id)
+        tab8.layout.addWidget(del_line_id)
+        tab8.layout.addWidget(data_btn)
+        tab8.layout.addWidget(data_box)
+        tab8.layout.addWidget(del_btn)
+
+        tab8.setLayout(tab8.layout)
 
         vbox = QVBoxLayout()
         vbox.addWidget(tabs)

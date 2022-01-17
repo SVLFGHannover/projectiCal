@@ -1,8 +1,23 @@
-from DB import db_request
 from PyQt6.QtWidgets import QFileDialog
 from icalendar import Calendar, Event, Alarm
 from datetime import timedelta
 from Insert import *
+
+
+def show_user():
+    user = ''
+    myresult_user = db_request("SELECT name FROM User")
+    for usr in myresult_user:
+        user += usr[0] + '\n'
+    return user
+
+
+def show_cal():
+    cal = ''
+    myresult_cal = db_request("SELECT name, userID FROM VCalendar")
+    for c in myresult_cal:
+        cal += c[0] + ', User - ' + request_user_name(c[1]) + '\n'
+    return cal
 
 
 def request_user_id(name):
@@ -11,6 +26,11 @@ def request_user_id(name):
         return None
     else:
         return myresult_user[0][0]
+
+
+def request_user_name(id_user):
+    myresult_user = db_request("SELECT name FROM User Where ID = '{0}'".format(id_user))
+    return myresult_user[0][0]
 
 
 def request_calendar_id(name):
