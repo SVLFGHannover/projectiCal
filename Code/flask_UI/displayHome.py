@@ -33,8 +33,8 @@ def displayHomeEvents(sessionID):
                 test4 = ["ein Tag", "eine Stunde", "eine Minute", "eine Sekunde"]
                 teststring = ""
                 for x in range(len(test3)):
-                    if test2[x] is not "":
-                        if test2[x] is "1":
+                    if test2[x] != "":
+                        if test2[x] == "1":
                             teststring += test4[x] + ", "
                         else:
                             teststring += test2[x] + " " + test3[x] + ", "

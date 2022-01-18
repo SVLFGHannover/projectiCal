@@ -9,7 +9,6 @@ from coop.RRule import RRule
 from coop.VAlarm import VAlarm
 
 
-
 def getCalendars(sessionid):
     cursor = db.connection.cursor(MySQLdb.cursors.DictCursor)
     cursor.execute('SELECT name FROM vcalendar WHERE userID = %s', (sessionid,))
@@ -119,7 +118,8 @@ def getVAlarm(event):
             db.connection.commit()
             event.dic_ID["valarmID"] = "(SELECT ID FROM valarm ORDER BY ID DESC LIMIT 1)"""
 
-def getOther(other, table, column):  # brauche einen vernünftigen Namen
+
+def getOther(other, table, column):
     if other:
         cursor = db.connection.cursor(MySQLdb.cursors.DictCursor)
         sql_other = f"INSERT INTO {table}({column}) VALUES ('{other}')"
