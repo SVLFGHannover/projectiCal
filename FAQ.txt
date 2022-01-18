@@ -1,1 +1,7 @@
 ﻿Fragen und Antworten
+
+Flask
+Beim Registrieren auf der Startseite bekomme ich diesen Fehler-Code
+-> MySQLdb._exceptions.OperationalError: (1049, "Unknown database 'icalendar'")
+Traceback.png
+QT
