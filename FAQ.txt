@@ -4,4 +4,7 @@ Flask
 Beim Registrieren auf der Startseite bekomme ich diesen Fehler-Code
 -> MySQLdb._exceptions.OperationalError: (1049, "Unknown database 'icalendar'")
 Traceback.png
+
 QT
+Beim starten über das Terminal steht das mein Python nicht gefunden wird, obwohl ich den genauen Path in den Umgebungsvariablen habe
+pytohn 3.10 
