@@ -36,7 +36,11 @@ Die Pakete sollen mit Paketinstallationsprogramm pip importiert werden.
 
 Das Widget befindet sich als komprimierte macOS-Anwendung iCalendar.zip im Ordner [qt_UI](https://github.com/SVLFGHannover/projectiCal/tree/master/Code/qt_UI). Auf einer macOS-Plattform soll die Anwendung ausgepackt werden und mit Doppelklick gestartet werden.
 
-Plattformunabhängig kann das Widget direkt vom Quellcode gestartet werden, indem man im Terminal zu dem Ordner qt_UI gehet und den Befehl python3 Widget_iCal.py eingibt.
+Plattformunabhängig kann das Widget direkt vom Quellcode gestartet werden, indem man im Terminal zu dem Ordner qt_UI gehet und den folgenden Befehl eingibt:
+
+```
+python3 Widget_iCal.py 
+```
 
 Eine Anleitung - Anleitung iCalendar.pdf, die Funktionalitäten des Widgets beschreibt, befindet sich im Ordner [Dokumentation](https://github.com/SVLFGHannover/projectiCal/tree/master/Dokumentation).
 
