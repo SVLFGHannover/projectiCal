@@ -40,9 +40,9 @@ Plattformunabhängig kann das Widget direkt vom Quellcode gestartet werden, inde
 
 Eine Anleitung - Anleitung iCalendar.pdf, die Funktionalitäten des Widgets beschreibt, befindet sich im Ordner [Dokumentation](https://github.com/SVLFGHannover/projectiCal/tree/master/Dokumentation).
 
-## 4 Flask
+## Flask
 
-### 4.1 Technologies
+### Technologies
 Die folgenden Pakete werden verwendet und müssen beim Starten des Programms
 - Flask
 - Flask_mysqldb
@@ -62,7 +62,7 @@ pip install flask_mysqldb
 pip install icalendar
 ```
 
-### 4.2 Setup
+### Setup
 
 Die Webanwendung läuft auf dem vom Flask-Paket bereitgestellten Entwicklungsserver. 
 Dieser wird im Pythonfile main_Flask.py gestartet.
