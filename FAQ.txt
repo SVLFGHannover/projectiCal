@@ -1,16 +1,9 @@
 Fragen und Antworten
 
-Flask
-Beim Registrieren auf der Startseite bekomme ich diesen Fehler-Code
--> MySQLdb._exceptions.OperationalError: (1049, "Unknown database 'icalendar'")
-Traceback.png
+War mein Fehler hatte die Datenbank falsch benannt
 
-Müsste jetzt gehen. Eine Variable in __init__.py war falsch.
+Flask
+
 
 QT
-Beim starten über das Terminal steht das mein Python nicht gefunden wird, obwohl ich den genauen Path in den Umgebungsvariablen habe
-pytohn 3.10 
 
-Wenn du in Terminal python --version bzw. python3 --version eingibst, soll 3.10 erscheinen.
-Dann python Widget_iCal.py bzw. python3 Widget_iCal.py eingeben.
-DieDatenbank in QT soll iCal heissen, host - localhost, Benutzer - root ohne Passwort.
