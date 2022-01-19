@@ -5,6 +5,10 @@ Flask
 
 ics-datein können nicht erstellt werden -> ics-datei-error.png
 
+Ich kriege den Error nicht. Hängt wohl mit den Zugriffsrechten zusammen.
+Wenn du auf den Code-Ordner gehst und dir Eigenschaften->Sicherheit anguckst.
+Sind dann da alle Haken auf "Zulassen"?
+
 QT
 
 ics-datein können erstellt werden -> beim übertragen in z.b outlook wird die datei als beschädigt angezeigt
