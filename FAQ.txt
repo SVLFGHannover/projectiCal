@@ -1,9 +1,10 @@
 Fragen und Antworten
 
-War mein Fehler hatte die Datenbank falsch benannt
 
 Flask
 
+ics-datein können nicht erstellt werden -> ics-datei-error.png
 
 QT
 
+ics-datein können erstellt werden -> beim übertragen in z.b outlook wird die datei als beschädigt angezeigt
