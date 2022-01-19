@@ -12,3 +12,4 @@ Sind dann da alle Haken auf "Zulassen"? -> JA
 QT
 
 ics-datein können erstellt werden -> beim übertragen in z.b outlook wird die datei als beschädigt angezeigt
+In Outlook habe ich es nicht getestet, zu Fehler-Liste zufügen, es soll zukünftig behoben werden.
