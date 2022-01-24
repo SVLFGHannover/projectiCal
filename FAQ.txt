@@ -3,7 +3,13 @@ Fragen und Antworten
 
 Flask
 
-ics-datein können nicht erstellt werden -> ics-datei-error.png
+* Beim Registrieren auf der Startseite bekomme ich diesen Fehler-Code
+-> MySQLdb._exceptions.OperationalError: (1049, "Unknown database 'icalendar'")
+Traceback.png
+
+Müsste jetzt gehen. Eine Variable in __init__.py war falsch.
+
+* ics-datein können nicht erstellt werden -> ics-datei-error.png
 
 Ich kriege den Error nicht. Hängt wohl mit den Zugriffsrechten zusammen.
 Wenn du auf den Code-Ordner gehst und dir Eigenschaften->Sicherheit anguckst.
@@ -11,5 +17,15 @@ Sind dann da alle Haken auf "Zulassen"? -> JA
 
 QT
 
-ics-datein können erstellt werden -> beim übertragen in z.b outlook wird die datei als beschädigt angezeigt
+* Beim starten über das Terminal steht das mein Python nicht gefunden wird, obwohl ich den genauen Path in den Umgebungsvariablen habe
+python 3.10 
+
+Wenn du in Terminal python --version bzw. python3 --version eingibst, soll 3.10 erscheinen.
+Dann python Widget_iCal.py bzw. python3 Widget_iCal.py eingeben.
+DieDatenbank in QT soll iCal heissen, host - localhost, Benutzer - root ohne Passwort.
+
+
+* ics-datein können erstellt werden -> beim übertragen in z.b outlook wird die datei als beschädigt angezeigt
+
 In Outlook habe ich es nicht getestet, zu Fehler-Liste zufügen, es soll zukünftig behoben werden.
+
