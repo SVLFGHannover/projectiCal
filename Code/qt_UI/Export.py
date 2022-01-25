@@ -82,10 +82,12 @@ def request_cal(name):
 
 
 # Event zum Kalender zufügen
-def add_event(summary, start, end, description, alarm, rule):
+def add_event(summary, start, end, description, alarm, rule, dtstamp):
     event_cal = Event()
+    event_cal.add('uid', 'user')
     event_cal.add('summary', summary)
     event_cal.add('description', description)
+    event_cal.add('dtstamp', dtstamp)
     event_cal.add('dtstart', start)
     event_cal.add('dtend', end)
 
@@ -116,13 +118,14 @@ def add_alarm(al):
 # ics-Datei zu allen Events erstellen
 def ics_event(name):
     ics_events = db_request(
-        "SELECT summary, dtstart, dtend, description, valarmID, rruleID  FROM VEvent WHERE attendeeID = "
+        "SELECT summary, dtstart, dtend, description, valarmID, rruleID, dtstamp  FROM VEvent WHERE attendeeID = "
         "(SELECT ID FROM user WHERE name = '{0}')".format(name))
     if ics_events:
         cal = Calendar()
         cal.add('prodid', 'Events ' + name)
+        cal.add('version', '2.0')
         for ev in ics_events:
-            cal.add_component(add_event(ev[0], ev[1], ev[2], ev[3], ev[4], ev[5]))
+            cal.add_component(add_event(ev[0], ev[1], ev[2], ev[3], ev[4], ev[5], ev[6]))
         ics = save_dialog('Save Events from ' + name)
         if ics == '':
             return 'No Events exported!'
@@ -143,11 +146,12 @@ def ics_cal(name):
     if myresult_cal:
         for cal in myresult_cal:
             cal_ev = db_request("SELECT summary, dtstart, dtend, description, valarmID, "
-                                "rruleID  FROM VEvent WHERE vcalendarID = {0}".format(str(cal[0])))
+                                "rruleID, dtstamp  FROM VEvent WHERE vcalendarID = {0}".format(str(cal[0])))
             calendar = Calendar()
             calendar.add('prodid', 'Events ' + cal[2])
+            cal.add('version', '2.0')
             for ev in cal_ev:
-                calendar.add_component(add_event(ev[0], ev[1], ev[2], ev[3], ev[4], ev[5]))
+                calendar.add_component(add_event(ev[0], ev[1], ev[2], ev[3], ev[4], ev[5], ev[6]))
             ics = save_dialog('Save Events from Calender ' + cal[2])
             if ics == '':
                 mess += 'No Events from Calender {0} exported!'.format(str(cal[2])) + '\n'
