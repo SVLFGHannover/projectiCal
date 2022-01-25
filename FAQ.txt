@@ -29,3 +29,6 @@ DieDatenbank in QT soll iCal heissen, host - localhost, Benutzer - root ohne Pas
 
 In Outlook habe ich es nicht getestet, zu Fehler-Liste zufügen, es soll zukünftig behoben werden.
 
+Die ics-Datei wurde validiert, sollte auch in Outlook korrekt angezeigt werden. 
+
+
