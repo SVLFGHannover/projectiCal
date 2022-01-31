@@ -15,6 +15,16 @@ Ich kriege den Error nicht. Hängt wohl mit den Zugriffsrechten zusammen.
 Wenn du auf den Code-Ordner gehst und dir Eigenschaften->Sicherheit anguckst.
 Sind dann da alle Haken auf "Zulassen"? -> JA
 
+31.01.22
+
+Meines Erachtens funktioniert die Ordnungsfunktion des Kalenders nicht
+Termine mit einem früheren Datum als andere, die aber erst später erstellt wurden sind in der Übersicht auch weiter unten(alle im selber Kalender)
+
+Beim Termin erstellen im "Ressourcen-Feld" werden Zahlen verändert.
+z.B wenn man 3 Termine erstellt mit jeweils einer 2 in dem Feld werden daraus 2,4,6
+Wird im "Ressourcen-Feld" eine Zahl zu erst geschrieben z.b 2 Tische, 1 Stuhl wird daraus 12
+Wenn Buchstaben zu erst kommen ändert sich nichts
+
 QT
 
 * Beim starten über das Terminal steht das mein Python nicht gefunden wird, obwohl ich den genauen Path in den Umgebungsvariablen habe
@@ -31,4 +41,12 @@ In Outlook habe ich es nicht getestet, zu Fehler-Liste zufügen, es soll zukünf
 
 Die ics-Datei wurde validiert, sollte auch in Outlook korrekt angezeigt werden. 
 
+31.01.22
 
+Beim Exportieren eines Kalenders wird die Anwendung geschloßen dabei wird keine Datei erstellt
+Dasselbe passiert wenn man im Tab DeleteEvents kein Namen eingibt
+Wenn man ein Event erstellt hat und dieses anschließend löschen möchte wird "unknown user" angezeigt und es wird nach Event ID gefragt
+(beim weiteren testen wird mir jetzt ein Termin vom 28.01 angezeigt, jedoch nicht die events von vor 1min)
+Man kann mehrmals den selben User und Kalender erstellen
+Tab "Export-Event" Termin "urlaub" wird nicht angezeigt deshalb kann ich keine ICS-Datein testen
+Beim Anzeigen-Feld z.b beim Anzeigen von User/Kalendern kann im Bereich schreiben und löschen (daten werden aber nicht verändert)
