@@ -25,6 +25,7 @@ Beim Termin erstellen im "Ressourcen-Feld" werden Zahlen verändert.
 z.B wenn man 3 Termine erstellt mit jeweils einer 2 in dem Feld werden daraus 2,4,6
 Wird im "Ressourcen-Feld" eine Zahl zu erst geschrieben z.b 2 Tische, 1 Stuhl wird daraus 12
 Wenn Buchstaben zu erst kommen ändert sich nichts
+-> sollte auch gelöst sein.
 
 QT
 

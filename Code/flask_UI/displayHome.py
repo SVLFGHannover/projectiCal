@@ -19,7 +19,10 @@ def displayHomeEvents(sessionID):
         cursor.execute(f'SELECT * FROM vevent WHERE vcalendarID = {e["ID"]}')
         events_T = cursor.fetchall()
         for k in list(events_T):
-
+            if k["resourcesID"]:
+                cursor.execute(f'SELECT resource FROM resources WHERE ID = {k["resourcesID"]}')
+                resourceD = cursor.fetchone()
+                k["resourcesID"] = resourceD["resource"]
             if k["dtstart"]:
                 k.update({"dtstart": k["dtstart"].strftime("%d.%m.%Y, %H:%M:%S")})
             if k["dtend"]:
@@ -27,8 +30,6 @@ def displayHomeEvents(sessionID):
             elif k["duration"]:
                 pattern = '[P]([0-9]*)[D][T]([0-9]*)[T]([0-9]*)[M]([0-9]*)[S]'
                 test = re.findall(pattern, k["duration"])
-                print(k["duration"])
-                print(test)
                 test2 = test[0]
                 test3 = ["Tage", "Stunden", "Minuten", "Sekunden"]
                 test4 = ["ein Tag", "eine Stunde", "eine Minute", "eine Sekunde"]
