@@ -2,6 +2,7 @@ import MySQLdb.cursors
 from flask import request
 from flask_UI import app, db
 import re
+from datetime import datetime
 
 
 def displayHomeEvents(sessionID):
@@ -48,4 +49,5 @@ def displayHomeEvents(sessionID):
                     if k["resourcesID"] == res["ID"]:
                         k.update({'resourcesID': res['resource']})
             events.append(k)
+            events.sort(key=lambda x: datetime.strptime(x["dtstart"], "%d.%m.%Y, %H:%M:%S"))         # Sortieren nach Startdatum
     return events

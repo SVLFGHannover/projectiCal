@@ -19,6 +19,7 @@ Sind dann da alle Haken auf "Zulassen"? -> JA
 
 Meines Erachtens funktioniert die Ordnungsfunktion des Kalenders nicht
 Termine mit einem früheren Datum als andere, die aber erst später erstellt wurden sind in der Übersicht auch weiter unten(alle im selber Kalender)
+-> wurde gelöst. Termine sind jetzt nach Startdatum geordnet
 
 Beim Termin erstellen im "Ressourcen-Feld" werden Zahlen verändert.
 z.B wenn man 3 Termine erstellt mit jeweils einer 2 in dem Feld werden daraus 2,4,6
