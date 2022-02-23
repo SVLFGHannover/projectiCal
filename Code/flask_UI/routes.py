@@ -50,6 +50,18 @@ def home():
     return render_template("home.html", msg="", loggedin=False)
 
 
+@app.route("/editEvent", methods=['GET', 'POST'])
+def editEvent():
+    if 'loggedin' in session:
+        test = request.form["editID"]
+        cursor = db.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('SELECT * FROM vevent WHERE ID = %s', (test,))
+        e = cursor.fetchone()
+        print(e)
+        return render_template("editEvent.html", event=e, loggedin=True)
+    return render_template("home.html", msg="", loggedin=False)
+
+
 @app.route("/createEvent", methods=['GET', 'POST'])
 def createEvent():
     if 'loggedin' in session:

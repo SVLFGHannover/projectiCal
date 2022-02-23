@@ -1,0 +1,244 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="container">
+    <h1>Termin bearbeiten</h1>
+    <form action="{{ url_for('createEvent') }}" method="post">
+
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="nameInput">Titel</label>
+                <input class="form-control" id="nameInput" name="name_E" required type="text" value="{{ event['summary'] }}"></div>
+            <div class="form-group col-md-6">
+                <label for="calendarInput">Kalender auswählen:</label>
+                <select class="form-control" id="calendarInput" name='calendars'>
+                    {% for element in calendars %}
+                    <option value='{{ element["name"] }}'> {{ element["name"] }}</option>
+                    {% endfor %}
+                </select>
+
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-12">
+                <label for="beschreibungInput">Beschreibung</label>
+                <textarea class="form-control" id="beschreibungInput" name="beschreibung_E">{{ event['description'] }}</textarea>
+            </div>
+
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-3">
+                <label>Start</label>
+                <input class="form-control" name="start_date" type="date" value="{{ event['dtstart'].date() }}" required>
+                <input class="form-control" name="start_time" type="time" value="{{ event['dtstart'].time() }}" >
+            </div>
+
+            <div class="form-group col-md-3" id="radio_end">
+                <label for="radio_end">Ende</label>
+                <div class="form-check">
+                    <input class="form-check-input s_time" id="bis_radio" name="s_radio" type="radio" value="Bis">
+                    <label class="form-check-label" for="bis_radio">
+                        Bis
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input s_time" id="dauer_radio" name="s_radio" type="radio" value="Dauer">
+                    <label class="form-check-label" for="dauer_radio">
+                        Dauer
+                    </label>
+                </div>
+            </div>
+            <script>
+$(document).ready(function(){
+    $("input.s_time").click(function(){
+    	var demovalue = $(this).val();
+        $("div.hide_Time").hide();
+        $("#show"+demovalue).show();
+    });
+});
+
+            </script>
+            <div class="form-group col-md-3">
+                <div class="hide_Time" id="showBis">
+                    <label></label>
+                    <input class="form-control" name="end_date" type="date">
+                    <input class="form-control" name="end_time" type="time">
+                </div>
+
+                <div class="hide_Time" id="showDauer">
+                    <label></label>
+                    <div class="form-row">
+                        <div class="col"><input class="form-control" id="sec" type="number" name="dur_sec" min="0"><label
+                                class="form-check-label" for="sec">Sekunden</label></div>
+                        <div class="col"><input class="form-control" id="min" type="number" name="dur_min" min="0"><label
+                                class="form-check-label" for="min">Minuten</label></div>
+                        <div class="col"><input class="form-control" id="hour" type="number" name="dur_hour" min="0"><label
+                                class="form-check-label" for="hour">Stunden</label></div>
+                        <div class="col"><input class="form-control" id="day" type="number" name="dur_day" min="0"><label
+                                class="form-check-label" for="day">Tage</label></div>
+                        <div class="col"><input class="form-control" id="week" type="number" name="dur_week" min="0"><label
+                                class="form-check-label" for="week">Wochen</label></div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <script>
+$(document).ready(function(){
+    $("input.s_alarm").click(function(){
+    	var demovalue = $(this).val();
+        $("div.hide_Alarm").hide();
+
+        if ($(this).val() == "KeinAlarm") {
+  $("#showRestAlarm").hide();
+}
+else {$("#showRestAlarm").show();}
+        $("#show"+demovalue).show();
+
+    });
+});
+
+        </script>
+
+        <div class="form-row">
+            <div class="form-group col-md-3">
+            <h6>Alarm</h6>
+            <label>
+                <input checked class="s_alarm" name="alarmRadio" type="radio" value="KeinAlarm">Kein</label>
+            <label>
+                <input class="s_alarm" name="alarmRadio" type="radio" value="Email">Email</label>
+             <!--<label>
+               <input class="s_alarm" name="alarmRadio" type="radio" value="Sound">Sound</label>-->
+            <label>
+                <input class="s_alarm" name="alarmRadio" type="radio" value="Display">Anzeige</label>
+            </div></div>
+
+        <div class="hide_Alarm" id="showRestAlarm">
+            <div class="form-row">
+            <div class="col-2">Wann</div>
+                <div class="col"><input type="number" name="whenA_sec" value="0"><label>Sekunden</label></div>
+                <div class="col"><input type="number" name="whenA_min" value="0"><label>Minuten</label></div>
+                <div class="col"><input type="number" name="whenA_hour" value="0"><label>Stunden</label></div>
+                <div class="col"><input type="number" name="whenA_day" value="0"><label>Tage</label></div>
+                </div>
+            <hr>
+            <div class="form-row">
+            <div class="col-2"> Wie lange</div>
+                <div class="col"><input type="number" name="durA_sec" value="0"><label>Sekunden</label></div>
+                <div class="col"><input type="number" name="durA_min" value="0"><label>Minuten</label></div>
+                <div class="col"><input type="number" name="durA_hour" value="0"><label>Stunden</label></div>
+                <div class="col"><input type="number" name="durA_day" value="0"><label>Tage</label></div>
+            </div>
+            <hr>
+            <div class="form-row">
+                <div class="col-2"> Wie lange</div>
+                <div class="col-6"><input type="number" name="countA" value="0"><label>Anzahl</label></div>
+            </div>
+            <hr>
+        </div>
+
+        <div class="hide_Alarm" id="showEmail">
+            Emailtext:<input type="text" name="emailT_A">
+            <p></p>
+            <p>Addressat:<input type="email" name="emailA_A">
+            </p>
+        </div>
+        <!--<div class="hide_Alarm" id="showSound">
+            Sounddatei:<input type="file" name="sound_A"></div>-->
+        <div class="hide_Alarm" id="showDisplay">
+            Angezeigte Nachricht:<input type="text" name="display_A"></div>
+
+<div>
+<h6>Wiederholung</h6>
+            <label>
+                <input checked class="s_rrule" name="rruleRadio" type="radio" value="KeinRRule">Keine</label>
+            <label>
+                <input class="s_rrule" name="rruleRadio" type="radio" value="hourly">Stündlich</label>
+            <label>
+                <input class="s_rrule" name="rruleRadio" type="radio" value="daily">Täglich</label>
+            <label>
+                <input class="s_rrule" name="rruleRadio" type="radio" value="weekly">Wöchentlich</label>
+    <label>
+                <input class="s_rrule" name="rruleRadio" type="radio" value="monthly">Monatlich</label>
+    <label>
+                <input class="s_rrule" name="rruleRadio" type="radio" value="yearly">Jährlich</label>
+                </div>
+
+        <div class="hide_RRule" id="showhourly">jede <input name="rr_hourly" type="number"> Stunde</div>
+        <div class="hide_RRule" id="showdaily">jeden <input name="rr_daily" type="number"> Tag</div>
+        <div class="hide_RRule" id="showweekly">
+            jede <input name="rr_weekly" type="number"> Woche
+        <p>
+            <label>Montag</label><input type="checkbox" name="rr_weekdays" VALUE="MO"> |
+            <label>Dienstag</label><input type="checkbox" name="rr_weekdays" VALUE="TU"> |
+            <label>Mittwoch</label><input type="checkbox" name="rr_weekdays" VALUE="WE"> |
+            <label>Donnerstag</label><input type="checkbox" name="rr_weekdays" VALUE="TH"> |
+            <label>Freitag</label><input type="checkbox" name="rr_weekdays" VALUE="FR"> |
+            <label>Samstag</label><input type="checkbox" name="rr_weekdays" VALUE="SA"> |
+            <label>Sonntag</label><input type="checkbox" name="rr_weekdays" VALUE="SO"> |
+        </p>
+
+        </div>
+        <div class="hide_RRule" id="showmonthly">jeden <input name="rr_monthly" type="number"> Monat</div>
+        <div class="hide_RRule" id="showyearly">jedes <input name="rr_yearly" type="number"> Jahr</div>
+        <div class="hide_RRule" id="showRestRRule">
+            <p>Endet nach <input name="rr_count" type="number"> malen oder am
+                    <input name="rr_until" type="date">
+                     oder <i>nie</i></p>
+        </div>
+<script>
+$(document).ready(function(){
+    $("input.s_rrule").click(function(){
+    	var demovalue = $(this).val();
+        $("div.hide_RRule").hide();
+
+        if ($(this).val() == "KeinRRule") {
+  $("#showRestRRule").hide();
+}
+else {$("#showRestRRule").show();}
+        $("#show"+demovalue).show();
+
+    });
+});
+
+        </script>
+
+<h6>Teilnehmer</h6>
+Email: <input type="email" name="contact">
+
+<script>
+$(document).ready(function(){
+    $("input.s_loc").click(function(){
+    	var demovalue = $(this).val();
+        $("div.hide_Loc").hide();
+        $("#show"+demovalue).show();
+    });
+});
+
+
+</script>
+<h6>Ort</h6>
+<div class="form-check form-check-inline">
+    <input class="form-check-input s_loc" name="inlineRadioOptions3" type="radio" value="GeoData">
+    <label class="form-check-label">GeoData</label>
+</div>
+<div class="form-check form-check-inline">
+    <input class="form-check-input s_loc" name="inlineRadioOptions3" type="radio" value="Address">
+    <label class="form-check-label">Adresse</label>
+</div>
+<div class="hide_Loc" id="showGeoData"><p>Latitude: <input name="lat" type="text">Longitude: <input name="lon"
+                                                                                                    type="text"></p>
+</div>
+<div class="hide_Loc" id="showAddress"><p>Stadt: <input name="city" type="text">Straße: <input name="street" type="text">
+</p></div>
+
+<h6>Ressourcen</h6>
+<input type="text" name="resources">
+<h6>Kategorie</h6>
+<input type="text" name="category">
+<p></p>
+<p><input type="submit" value="Event bearbeiten"></p>
+</form>
+<h5> {{ msg }} </h5>
+</div>
+{% endblock content %}
