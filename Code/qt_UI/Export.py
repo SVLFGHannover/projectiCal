@@ -149,7 +149,7 @@ def ics_cal(name):
                                 "rruleID, dtstamp  FROM VEvent WHERE vcalendarID = {0}".format(str(cal[0])))
             calendar = Calendar()
             calendar.add('prodid', 'Events ' + cal[2])
-            cal.add('version', '2.0')
+            calendar.add('version', '2.0')
             for ev in cal_ev:
                 calendar.add_component(add_event(ev[0], ev[1], ev[2], ev[3], ev[4], ev[5], ev[6]))
             ics = save_dialog('Save Events from Calender ' + cal[2])

@@ -69,7 +69,7 @@ def select_events(date, name):
             "SELECT summary, dtstart, dtend, attendeeID, ID FROM `VEvent` WHERE dtend < '{0}'".format(date))
         for ev in events_req:
             mess += str(ev[0]) + ' ' + ev[1].strftime(format="%d.%m.%y %H:%M") + ' - ' + ev[2].strftime(
-                format="%d.%m.%y %H:%M") + ' - ' + Export.request_user_name(ev[3]) + ' ID = ' + str(ev[4]) + '\n'
+                format="%d.%m.%y %H:%M") + ' - ' + Export.request_user_name(ev[3]) + ' Event ID = ' + str(ev[4]) + '\n'
         return mess
     else:
         mess = 'Events {0}: \n'.format(name)
@@ -78,11 +78,11 @@ def select_events(date, name):
             return 'Unknown user'
         else:
             events_req = db_request(
-                "SELECT summary, dtstart, dtend FROM `VEvent` WHERE dtend < '{0}' AND attendeeID = {1}".format(date,
+                "SELECT summary, dtstart, dtend, ID FROM `VEvent` WHERE dtend < '{0}' AND attendeeID = {1}".format(date,
                                                                                                                id_user))
             for ev in events_req:
                 mess += str(ev[0]) + ' ' + ev[1].strftime(format="%d.%m.%y %H:%M") + ' - ' + ev[2].strftime(
-                    format="%d.%m.%y %H:%M") + '\n'
+                    format="%d.%m.%y %H:%M") + ' Event ID = ' + str(ev[3]) + '\n'
             return mess
 
 
