@@ -5,7 +5,7 @@ from flask import request
 from dateutil import parser
 
 
-def test(t):
+def formatNumberUnderTen(t):
     if t < 10:
         s = "0" + str(t)
     else:
@@ -14,32 +14,29 @@ def test(t):
 
 
 def correctTime(time):
-    newtime = f"{test(time.year)}{test(time.month)}{test(time.day)}T{test(time.hour)}{test(time.minute)}{test(time.second)}Z"
+    newtime = f"{formatNumberUnderTen(time.year)}{formatNumberUnderTen(time.month)}{formatNumberUnderTen(time.day)}T{formatNumberUnderTen(time.hour)}{formatNumberUnderTen(time.minute)}{formatNumberUnderTen(time.second)}Z "
     return newtime
+
 
 def createICSfromEvent(eventID):
     cursor = db.connection.cursor(MySQLdb.cursors.DictCursor)
     cursor.execute(f'SELECT * FROM vevent WHERE ID = {eventID}')
     event = cursor.fetchone()
-    print(event)
     cursor.execute(f'SELECT * FROM vcalendar WHERE ID = {event["vcalendarID"]}')
     calendar = cursor.fetchone()
     c = Calendar()
     e = Event()
+
     c["name"] = calendar["name"]
     c["description"] = calendar["description"]
     c["prodid"] = calendar["prodid"]
     e["UID"] = event["uid"]
     c["Version"] = calendar["version"]
     e["summary"] = event["summary"]
-
     e["dtstart"] = correctTime(event["dtstart"])
-
     e["created"] = correctTime(event['created'])
     e["dtstamp"] = correctTime(event['dtstamp'])
     e["description"] = event["description"]
-    print(event["dtstart"])
-    print(event["dtend"])
 
     if event["duration"]:
         e["duration"] = event["duration"]

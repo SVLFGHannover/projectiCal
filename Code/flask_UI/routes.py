@@ -53,13 +53,13 @@ def home():
 @app.route("/createEvent", methods=['GET', 'POST'])
 def createEvent():
     if 'loggedin' in session:
-        calendars = getCalendars(session["ID"])  # Select all Calendars for Dropdown menu
+        calendars = getCalendars(session["ID"])             # Select all Calendars for Dropdown menu
         calendars_L = list(calendars)
 
         if request.method == 'POST':
             cursor = db.connection.cursor(MySQLdb.cursors.DictCursor)
             event = createE(session["ID"])                   # create Event from Inputform
-            cursor.execute(event.insertEvent())  # Insert VEvent into DB
+            cursor.execute(event.insertEvent())              # Insert VEvent into DB
             db.connection.commit()
 
             return render_template("createEvent.html", title='Account', loggedin=True, calendars=calendars_L,

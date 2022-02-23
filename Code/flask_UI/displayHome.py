@@ -19,33 +19,30 @@ def displayHomeEvents(sessionID):
         cursor.execute(f'SELECT * FROM vevent WHERE vcalendarID = {e["ID"]}')
         events_T = cursor.fetchall()
         for k in list(events_T):
-            if k["resourcesID"]:
-                cursor.execute(f'SELECT resource FROM resources WHERE ID = {k["resourcesID"]}')
-                resourceD = cursor.fetchone()
-                k["resourcesID"] = resourceD["resource"]
             if k["dtstart"]:
                 k.update({"dtstart": k["dtstart"].strftime("%d.%m.%Y, %H:%M:%S")})
             if k["dtend"]:
                 k.update({"dtend": k["dtend"].strftime("%d.%m.%Y, %H:%M:%S")})
             elif k["duration"]:
                 pattern = '[P]([0-9]*)[D][T]([0-9]*)[T]([0-9]*)[M]([0-9]*)[S]'
-                test = re.findall(pattern, k["duration"])
-                test2 = test[0]
-                test3 = ["Tage", "Stunden", "Minuten", "Sekunden"]
-                test4 = ["ein Tag", "eine Stunde", "eine Minute", "eine Sekunde"]
-                teststring = ""
-                for x in range(len(test3)):
-                    if test2[x] != "":
-                        if test2[x] == "1":
-                            teststring += test4[x] + ", "
+                dur_FindAll = re.findall(pattern, k["duration"])
+                dur_Number = dur_FindAll[0]
+                dur_Text = ["Tage", "Stunden", "Minuten", "Sekunden"]
+                dur_OneException = ["ein Tag", "eine Stunde", "eine Minute", "eine Sekunde"]
+                dur_OutputString = ""
+                for x in range(len(dur_Text)):
+                    if dur_Number[x] != "":
+                        if dur_Number[x] == "1":
+                            dur_OutputString += dur_OneException[x] + ", "
                         else:
-                            teststring += test2[x] + " " + test3[x] + ", "
-                k.update({'duration': teststring})
+                            dur_OutputString += dur_Number[x] + " " + dur_Text[x] + ", "
+                k.update({'duration': dur_OutputString})
             k.update({'vcalendarID': e['NAME']})
             if k["categoriesID"]:
                 for cat in categories:
                     if k["categoriesID"] == cat["ID"]:
                         k.update({'categoriesID': cat['category']})
+            if k["resourcesID"]:
                 for res in resources:
                     if k["resourcesID"] == res["ID"]:
                         k.update({'resourcesID': res['resource']})
