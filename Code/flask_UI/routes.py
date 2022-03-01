@@ -1,5 +1,4 @@
 import datetime
-
 from flask import Flask, render_template, flash, redirect, url_for, request, session
 from flask_UI import app, db
 from flask_mysqldb import MySQL
@@ -150,12 +149,10 @@ def createICSEvent():
     if request.method == 'POST':
         if 'eventID' in request.form:
             icsString = createICSfromEvent(request.form["eventID"])
-            output = f"Die Datei {icsString}.ics wurde erstellt."
-            return render_template("info.html", info=output, loggedin=True)
+            return render_template("info.html", info=icsString, loggedin=True)
         if 'calendarID' in request.form:
             icsString = createICSfromCalendar(request.form["calendarID"])
-            output = f"Die Datei {icsString} wurde erstellt."
-            return render_template("info.html", info=output, loggedin=True)
+            return render_template("info.html", info=icsString, loggedin=True)
     else:
         redirect(url_for('home'))
 

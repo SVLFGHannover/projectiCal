@@ -1,8 +1,18 @@
+import getpass
 from icalendar import Calendar, Event
 from flask_UI import app, db
 import MySQLdb.cursors
 from flask import request
-from dateutil import parser
+import os
+
+
+def writeICSFile(calendar, title):
+    if not os.path.isdir(f'/Users/{getpass.getuser()}/iCalender_Files'):
+        os.mkdir(f'/Users/{getpass.getuser()}/iCalender_Files')
+
+    with open(f'/Users/{getpass.getuser()}/iCalender_Files/{title}.ics', 'wb') as file_to_write:
+        file_to_write.write(calendar.to_ical())
+    file_to_write.close()
 
 
 def formatNumberUnderTen(t):
@@ -49,10 +59,12 @@ def createICSfromEvent(eventID):
         e.add("category", catch["category"])
 
     c.add_component(e)
-    f = open(e["summary"] + '.ics', 'wb')
-    f.write(c.to_ical())
-    f.close()
-    return e["summary"] + ".ics"
+
+    writeICSFile(c, e["summary"])
+
+    outputString = f"Die Datei {e['summary']}.ics wurde im Ordner /Users/{getpass.getuser()}/iCalender_Files erstellt."
+
+    return outputString
 
 
 def createICSfromCalendar(calendarID):
@@ -89,7 +101,9 @@ def createICSfromCalendar(calendarID):
         e_copy = e.copy()   # otherwise clear didn't work like intended
         c.add_component(e_copy)
         e.clear()
-    f = open(c["name"] + '.ics', 'wb')
-    f.write(c.to_ical())
-    f.close()
-    return c["name"] + ".ics"
+
+    writeICSFile(c, c["name"])
+
+    outputString = f"Die Datei {c['name']}.ics wurde im Ordner /Users/{getpass.getuser()}/iCalender_Files erstellt."
+
+    return outputString

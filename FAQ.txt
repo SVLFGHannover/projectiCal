@@ -14,6 +14,7 @@ Müsste jetzt gehen. Eine Variable in __init__.py war falsch.
 Ich kriege den Error nicht. Hängt wohl mit den Zugriffsrechten zusammen.
 Wenn du auf den Code-Ordner gehst und dir Eigenschaften->Sicherheit anguckst.
 Sind dann da alle Haken auf "Zulassen"? -> JA
+--> Vielleicht funktioniert es jetzt.
 
 31.01.22
 
